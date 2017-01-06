@@ -10,6 +10,6 @@ import wow.domain.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-	public List<User> findByUserId(String userId);
-	
+	public User findByUserId(String userId);
+	public List<User> findByUserIdContaining(String text);
 }

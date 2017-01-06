@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>検索結果</title>
+</head>
+<body>
+<h3>検索結果</h3>
+
+<table class="user">
+    <tr>
+      <th>ユーザーID</th>
+      <th>ユーザー名</th>
+      <th>自己紹介</th>
+    </tr>
+    <tr th:each="user:${user}">
+      <td>
+      	<form action="search" method="POST">
+      		<input type="submit" class="btn" name="user_id" th:value="${user.userId}" />
+      	</form>
+      </td>
+      <td th:text="${user.userName}">name</td>
+      <td th:text="${user.profile}">profile</td>
+    </tr>
+</table>
+
+<form th:action="@{/logout}" method="post">
+    <button>ログアウト</button>
+</form>
+</body>
+</html>

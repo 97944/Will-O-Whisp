@@ -11,6 +11,7 @@
 		<table class="user">
 			<tr th:each="user:${user}">
 				<td><input type="submit" class="btn" name="profile" th:value="${user.userId}" /></td>
+				<td><input type="text" name="searchText"/></td>
 				<td><input type="submit" class="btn" name="search" value="検索" /></td>
 				<td><input type="submit" class="btn" name="addTweet" value="つぶやく" /></td>
 			</tr>

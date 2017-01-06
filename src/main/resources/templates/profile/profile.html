@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>ユーザー</title>
+<meta charset="UTF-8" />
+<title>ユーザー</title>
 </head>
 <body>
-<h3>ユーザー</h3>
+	<h3>ユーザー</h3>
 
-<form action="profile" method="POST">
-	<input type="submit" class="btn" name="timeLine" value="タイムライン表示" />
-</form>
+	<form action="profile" method="POST">
+		<table>
+			<tr th:each="user:${user}">
+				<td>
+					<input type="hidden" name="userId" th:value="${user.userId}" />
+					<input type="submit" class="btn" name="timeLine" value="タイムライン表示" />
+				</td>
+			</tr>
+		</table>
+	</form>
 
-<table class="user">
-    <tr>
-      <th>ユーザーID</th>
-      <th>ユーザー名</th>
-      <th>自己紹介</th>
-    </tr>
-    <tr th:each="user:${user}">
-      <td th:text="${user.userId}">id</td>
-      <td th:text="${user.userName}">name</td>
-      <td th:text="${user.profile}">profile</td>
-    </tr>
-</table>
+	<table class="user">
+		<tr>
+			<th>ユーザーID</th>
+			<th>ユーザー名</th>
+			<th>自己紹介</th>
+		</tr>
+		<tr th:each="user:${user}">
+			<td th:text="${user.userId}">id</td>
+			<td th:text="${user.userName}">name</td>
+			<td th:text="${user.profile}">profile</td>
+		</tr>
+	</table>
 
-<form th:action="@{/logout}" method="post">
-    <button>ログアウト</button>
-</form>
+	<form th:action="@{/logout}" method="post">
+		<button>ログアウト</button>
+	</form>
 </body>
 </html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>つぶやき</title>
+</head>
+<body>
+	<h3>つぶやく</h3>
+
+	<form action="addTweet" method="post">
+		<table class="tweet">
+			<tr>
+				<td>つぶやく</td>
+				<td><input type="text" name="tweet" th:value="${tweet}" /></td>
+			</tr>
+		</table>
+		<input type="submit" class="btn" value="つぶやく" />
+	</form>
+
+	<form th:action="@{/logout}" method="post">
+		<button>ログアウト</button>
+	</form>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>アカウント作成</title>
+</head>
+<body>
+	<h3>アカウント 作成</h3>
+
+	<form action="account" method="post">
+		<table class="user">
+			<tr>
+				<td>ユーザーID:</td>
+				<td><input type="text" name="user_id" th:value="${id}" /></td>
+			</tr>
+			<tr>
+				<td>ユーザー名:</td>
+				<td><input type="text" name="user_name" th:value="${name}" /></td>
+			</tr>
+			<tr>
+				<td>パスワード:</td>
+				<td><input type="text" name="user_password" th:value="${pass}" /></td>
+			</tr>
+		</table>
+		<input type="submit" class="btn" value="登録" />
+	</form>
+
+	<form th:action="@{/logout}" method="post">
+		<button>キャンセル</button>
+	</form>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>タイムライン</title>
+</head>
+<body>
+	<h3>タイムライン</h3>
+
+	<form action="timeLine" method="POST">
+		<table class="user">
+			<tr th:each="user:${user}">
+				<td><input type="submit" class="btn" name="profile" th:value="${user.userId}" /></td>
+				<td><input type="submit" class="btn" name="search" value="検索" /></td>
+				<td><input type="submit" class="btn" name="addTweet" value="つぶやく" /></td>
+			</tr>
+		</table>
+	</form>
+
+	<table class="timeLine">
+		<tr>
+			<th>ユーザー名</th>
+			<th>内容</th>
+			<th>時間</th>
+		</tr>
+		<tr th:each="timeLine: ${timeLine}">
+			<td th:text="${timeLine.userId}">id</td>
+			<td th:text="${timeLine.detail}">detail</td>
+			<td th:text="${timeLine.time}">time</td>
+		</tr>
+	</table>
+	<form th:action="@{/logout}" method="post">
+		<button>ログアウト</button>
+	</form>
+</body>
+</html>

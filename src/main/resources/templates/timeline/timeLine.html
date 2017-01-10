@@ -1,24 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<style type="text/css">
+.card {
+  width: 350px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px #ccc;
+  margin: 5px;
+}
+.card-img {
+  border-radius: 5px 5px 0 0;
+  max-width: 100%;
+  height: auto;
+}
+.card-content {
+  padding: 20px;
+}
+.card-title {
+  font-size: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+.card-text {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.card-link {
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding: 20px;
+}
+.card-link a {
+  text-decoration: none;
+  color: #0bd;
+  margin: 0 10px;
+}
+.card-link a:hover {
+  color: #0090aa;
+}
+</style>
 <meta charset="UTF-8" />
 <title>タイムライン</title>
 </head>
-<body>
+<body bgcolor="#EEEEEE">
 	<h3>タイムライン</h3>
 
 	<form action="timeLine" method="POST">
 		<table class="user">
 			<tr th:each="user:${user}">
-				<td><input type="submit" class="btn" name="profile" th:value="${user.userId}" /></td>
-				<td><input type="text" name="searchText"/></td>
+				<td><input type="submit" class="btn" name="profile"
+					th:value="${user.userId}" /></td>
+				<td><input type="text" name="searchText" /></td>
 				<td><input type="submit" class="btn" name="search" value="検索" /></td>
-				<td><input type="submit" class="btn" name="addTweet" value="つぶやく" /></td>
+				<td><input type="submit" class="btn" name="addTweet"
+					value="つぶやく" /></td>
 			</tr>
 		</table>
 	</form>
-
-	<table class="timeLine">
+	
+	<!--<table class="timeLine">
 		<tr>
 			<th>ユーザー名</th>
 			<th>内容</th>
@@ -30,6 +73,22 @@
 			<td th:text="${timeLine.time}">time</td>
 		</tr>
 	</table>
+	-->
+	<section class="card"  th:each="timeLine:${timeLine}" style="float:center">
+		<div class="card-title">
+			<a th:text="${timeLine.userId}"></a>
+		</div>
+		<div class="card-content">
+			<a th:text="${timeLine.detail}">detail</a>
+			<input type="hidden" name="button_id" th:value="${timeLine.tweetId}"/>
+		</div>
+		<div class="card-button">
+			<a><input type="submit" name="reply" value="⇒"/></a>
+			<a><input type="submit" name="retweet" value="⇔"/></a>
+			<a><input type="submit" name="favorite" value="☆"/></a>
+			<a><input type="submit" name="block" value="🚫"/></a>
+		</div>
+	</section>
 	<form th:action="@{/logout}" method="post">
 		<button>ログアウト</button>
 	</form>

@@ -24,8 +24,12 @@ public class UserService {
     	return user;
     }
     public List<Follow> loadFollowUserByUserId(String userId){
-    	List<Follow> user = followRepository.findByUserId(userId);
-    	return user;
+    	List<Follow> follow = followRepository.findByUserId(userId);
+    	return follow;
+    }
+    public List<Follow> loadFollowerByUserId(String userId){
+    	List<Follow> follower = followRepository.findByFollowUserId(userId);
+    	return follower;
     }
     public User create(User user){
     	User list = userRepository.save(user);

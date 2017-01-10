@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
+import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
 import wow.domain.model.Tweet;
 import wow.domain.model.User;

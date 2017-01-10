@@ -10,4 +10,5 @@ import wow.domain.model.Tweet;
 @Repository
 public interface TweetRepository extends JpaRepository<Tweet, String> {
 	public List<Tweet> findByUserIdContainsOrderByTimeDesc(String userId);
+	public List<Tweet> findByTweetIdContainsOrderByTimeDesc(String tweetId);
 }

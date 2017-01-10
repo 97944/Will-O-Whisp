@@ -10,4 +10,5 @@ import wow.domain.model.Follow;
 @Repository
 public interface FollowUserRepository extends JpaRepository<Follow, String> {
 	public List<Follow> findByUserId(String userId);
+	public List<Follow> findByFollowUserId(String userId);
 }

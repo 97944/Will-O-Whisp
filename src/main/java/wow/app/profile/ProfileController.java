@@ -45,6 +45,8 @@ public class ProfileController {
 		// ログインユーザーのツイートをDBから取ってきて、モデルにセット
 		List<Tweet> tweet = tweetService.findTimeLine(userId);
 		model.addAttribute("tweet",tweet);
+		model.addAttribute("count_tweet",tweet.size());
+		System.out.println("ツイート数" + tweet.size());
 		
 		// フォローユーザをDBから取ってきて、モデルにセット
 		List<Follow> follow = userService.loadFollowUserByUserId(userId);
@@ -53,6 +55,8 @@ public class ProfileController {
 			followUser.add(userService.loadUserByUserId(follow.get(i).getFollowUserId()));
 		}
 		model.addAttribute("follow",followUser);
+		model.addAttribute("count_follow",followUser.size());
+		System.out.println("フォロー数" + followUser.size());
 		
 		// フォロワーをDBから取ってきて、モデルにセット
 		List<Follow> follower = userService.loadFollowerByUserId(userId);
@@ -61,11 +65,14 @@ public class ProfileController {
 			followerUser.add(userService.loadUserByUserId(follower.get(i).getUserId()));
 		}
 		model.addAttribute("follower",followerUser);
+		model.addAttribute("count_follower",followerUser.size());
+		System.out.println("フォロワー数" + followerUser.size());
 		
 		// いいねしたツイートをDBから取ってきて、モデルにセット
 		List<Tweet> favorite = tweetService.findFavoriteTweet(userId);
 		model.addAttribute("favorite",favorite);
-		
+		model.addAttribute("count_favorite",favorite.size());
+		System.out.println("お気に入り数" + favorite.size());
 		
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
 		

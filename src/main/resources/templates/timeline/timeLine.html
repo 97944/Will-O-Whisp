@@ -1,92 +1,319 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="css/bootstrap.min.css" rel="stylesheet"></link>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <style type="text/css">
+/* 表示領域全体 */
+div.tabbox {
+	margin: 0px;
+	padding: 0px;
+	width: 500px;
+}
+
+/* タブ部分 */
+p.tabs {
+	margin: 0px;
+	padding: 0px;
+}
+
+p.tabs a {
+	display: block;
+	width: 5em;
+	float: left;
+	margin: 0px 1px 0px 0px;
+	padding: 3px;
+	text-align: center;
+	border-radius: 12px 12px 0px 0px; /* 角を丸くする */
+}
+
+p.tabs a.tab1 {
+	background-color: blue;
+	color: white;
+}
+
+p.tabs a.tab2 {
+	background-color: #aaaa00;
+	color: white;
+}
+
+p.tabs a.tab3 {
+	background-color: red;
+	color: white;
+}
+
+p.tabs a.tab4 {
+	background-color: green;
+	color: white;
+}
+
+p.tabs a.tab5 {
+	background-color: #ff00ff;
+	color: white;
+}
+
+p.tabs a:hover {
+	color: yellow;
+}
+
+/* タブ中身のボックス */
+div.tab {
+	height: 300px;
+	overflow: auto;
+	clear: left;
+}
+
+div#tab1 {
+	border: 2px solid blue;
+	background-color: #ccffff;
+}
+
+div#tab2 {
+	border: 2px solid #aaaa00;
+	background-color: #ffffcc;
+}
+
+div#tab3 {
+	border: 2px solid red;
+	background-color: #ffcccc;
+}
+
+div#tab4 {
+	border: 2px solid green;
+	background-color: #00ff9a;
+}
+
+div#tab5 {
+	border: 2px solid #ff00ff;
+	background-color: #ffaaff;
+}
+
+div.tab p {
+	margin: 0.5em;
+}
+
 .card {
-  width: 350px;
-  background: #fff;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px #ccc;
-  margin: 5px;
+	width: 350px;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+	margin: 5px;
 }
+
 .card-img {
-  border-radius: 5px 5px 0 0;
-  max-width: 100%;
-  height: auto;
+	border-radius: 5px 5px 0 0;
+	max-width: 100%;
+	height: auto;
 }
+
 .card-content {
-  padding: 20px;
+	padding: 20px;
 }
+
 .card-title {
-  font-size: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #333;
+	font-size: 20px;
+	margin-bottom: 20px;
+	text-align: center;
+	color: #333;
 }
+
 .card-text {
-  color: #777;
-  font-size: 14px;
-  line-height: 1.5;
+	color: #777;
+	font-size: 14px;
+	line-height: 1.5;
 }
+
 .card-link {
-  text-align: center;
-  border-top: 1px solid #eee;
-  padding: 20px;
+	text-align: center;
+	border-top: 1px solid #eee;
+	padding: 20px;
 }
+
 .card-link a {
-  text-decoration: none;
-  color: #0bd;
-  margin: 0 10px;
+	text-decoration: none;
+	color: #0bd;
+	margin: 0 10px;
 }
+
 .card-link a:hover {
-  color: #0090aa;
+	color: #0090aa;
+}
+
+.profile_card {
+	word-wrap: break-word;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+	float: left;
+	overflow: hidden;
+	width: 200px;
+	height: 200px;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+}
+
+.profile_card-name {
+	font-size: 20px;
+	margin-bottom: 20px;
+	text-align: center;
+	color: #333;
+}
+
+.profile_card-id {
+	font-size: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+	color: #333;
+}
+
+.profile_card-profile {
+	font-size: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+	color: #333;
+}
+
+.profile_card-count {
+	text-align: left;
+	font-size: 15px;
 }
 </style>
 <meta charset="UTF-8" />
 <title>タイムライン</title>
 </head>
 <body bgcolor="#EEEEEE">
-	<h3>タイムライン</h3>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbarEexample3">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<form action="timeLine" method="post" name="form1">
+					<a class="navbar-brand" href="#" onClick="document.form1.submit();">
+						Wow </a> <input type="hidden" name="timeLine"
+						th:value="${user.userId}" />
+				</form>
+			</div>
 
-	<form action="timeLine" method="POST">
+			<div class="collapse navbar-collapse" id="navbarEexample3">
+				<form action="timeLine/pro" method="POST" name="form2">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#"
+							onClick="document.form2.submit();">Profile</a> <input
+							type="hidden" name="user_id" th:value="${user.userId}" /></li>
+					</ul>
+				</form>
+				<form class="navbar-form navbar-left" role="search"
+					action="timeLine" method="POST">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="検索キーワード"
+							name="searchText" />
+					</div>
+					<button type="submit" class="btn btn-default" name="search">検索</button>
+				</form>
+				<ul class="nav navbar-nav">
+					<li class="dropdown active"><a href="#"
+						class="dropdown-toggle" data-toggle="dropdown" role="button">○<span
+							class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#">設定</a></li>
+							<li><a href="#">ログアウト</a></li>
+						</ul></li>
+				</ul>
+
+				<button class="btn btn-primary navbar-btn" data-toggle="modal"
+					data-target="#modal-example">ツイート</button>
+
+				<!-- 2.モーダルの配置 -->
+				<form action="timeLine/add" method="POST">
+					<div class="modal" id="modal-example" tabindex="-1">
+						<div class="modal-dialog">
+
+							<!-- 3.モーダルのコンテンツ -->
+							<div class="modal-content">
+								<!-- 4.モーダルのヘッダ -->
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span>
+									</button>
+									<h4 class="modal-title" id="modal-label">ツイートする</h4>
+								</div>
+								<!-- 5.モーダルのボディ -->
+								<div class="modal-body">
+									<textarea placeholder="いまどうしてる？" rows="3" class="form-control"
+										id="InputTextarea" name="tweet"></textarea>
+								</div>
+								<!-- 6.モーダルのフッタ -->
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">キャンセル</button>
+									<button type="submit" class="btn btn-primary">ツイート</button>
+									<input type="hidden" name="tweet_user_id" th:value="${user.userId}" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</nav>
+
+	<form action="timeLine/add" method="POST">
 		<table class="user">
-			<tr th:each="user:${user}">
-				<td><input type="submit" class="btn" name="profile"
-					th:value="${user.userId}" /></td>
+			<tr>
 				<td><input type="text" name="searchText" /></td>
 				<td><input type="submit" class="btn" name="search" value="検索" /></td>
-				<td><input type="submit" class="btn" name="addTweet"
-					value="つぶやく" /></td>
+				<td><input type="hidden" name="add_id"
+					th:value="${user.userId}" /> <input type="submit" class="btn"
+					name="addTweet" value="つぶやく" /></td>
 			</tr>
 		</table>
 	</form>
-	
-	<!--<table class="timeLine">
-		<tr>
-			<th>ユーザー名</th>
-			<th>内容</th>
-			<th>時間</th>
-		</tr>
-		<tr th:each="timeLine: ${timeLine}">
-			<td th:text="${timeLine.userId}">id</td>
-			<td th:text="${timeLine.detail}">detail</td>
-			<td th:text="${timeLine.time}">time</td>
-		</tr>
-	</table>
-	-->
-	<section class="card"  th:each="timeLine:${timeLine}" style="float:center">
-		<div class="card-title">
-			<a th:text="${timeLine.userId}"></a>
-		</div>
+	<form action="timeLine" method="POST">
+		<section class="profile_card" th:each="user:${user}">
+			<div class="profile_card-name">
+				<a th:text="${user.userName}"></a>
+			</div>
+			<div class="profile_card-id">
+				<input type="submit" name="user_id" th:value="${user.userId}" />
+			</div>
+			<div class="profile_card-profile">
+				<a th:text="${user.profile}"></a>
+			</div>
+			<table class="profile_card-count" width="200">
+				<tr>
+					<td>ツイート<br></br> <span th:text="${count_tweet}"></span></td>
+					<td>フォロー<br></br> <span th:text="${count_follow}"></span></td>
+					<td>フォロワー<br></br> <span th:text="${count_follower}"></span></td>
+				</tr>
+			</table>
+		</section>
+	</form>
+
+	<section class="card" th:each="timeLine:${timeLine}">
+		<form action="timeLine/profile" method="POST">
+			<div class="card-title">
+				<input type="submit" name="timeLine_user_id"
+					th:value="${timeLine.userId}" />
+			</div>
+		</form>
 		<div class="card-content">
-			<a th:text="${timeLine.detail}">detail</a>
-			<input type="hidden" name="button_id" th:value="${timeLine.tweetId}"/>
+			<a th:text="${timeLine.detail}">detail</a> <input type="hidden"
+				name="button_id" th:value="${timeLine.tweetId}" />
 		</div>
 		<div class="card-button">
-			<a><input type="submit" name="reply" value="⇒"/></a>
-			<a><input type="submit" name="retweet" value="⇔"/></a>
-			<a><input type="submit" name="favorite" value="☆"/></a>
-			<a><input type="submit" name="block" value="🚫"/></a>
+			<a><input type="submit" name="reply" value="⇒" /></a> <a><input
+				type="submit" name="retweet" value="⇔" /></a> <a><input
+				type="submit" name="favorite" value="☆" /></a> <a><input
+				type="submit" name="block" value="🚫" /></a>
 		</div>
 	</section>
 	<form th:action="@{/logout}" method="post">

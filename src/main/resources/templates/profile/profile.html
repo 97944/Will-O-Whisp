@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="css/bootstrap.min.css" rel="stylesheet"></link>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script type="text/javascript">
 	function ChangeTab(tabname) {
 		// 全部消す
@@ -18,7 +22,7 @@
 div.tabbox {
 	margin: 0px;
 	padding: 0px;
-	width: 500px;
+	width: 800px;
 }
 
 /* タブ部分 */
@@ -151,7 +155,9 @@ div.tab p {
 
 .profile_card {
 	word-wrap: break-word;
-	background: #fff; border-radius : 5px; box-shadow : 0 2px 5px #ccc;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
 	float: left;
 	overflow: hidden;
 	width: 120px;
@@ -182,97 +188,122 @@ div.tab p {
 	text-align: center;
 	color: #333;
 }
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	/* Set the fixed height of the footer here */
+	height: 60px;
+	background-color: #f5f5f5;
+}
 </style>
 <meta charset="UTF-8" />
 
 <title>ユーザー</title>
 </head>
 <body>
-	<h3>ユーザー</h3>
-
-	<div class="tabbox" style="float: center">
-		<p class="tabs">
-			<a href="#tab1" class="tab1"
-				onclick="ChangeTab('tab1'); return false;">ツイート</a> <a href="#tab2"
-				class="tab2" onclick="ChangeTab('tab2'); return false;">フォロー</a> <a
-				href="#tab3" class="tab3" onclick="ChangeTab('tab3'); return false;">フォロワー</a>
-			<a href="#tab4" class="tab4"
-				onclick="ChangeTab('tab4'); return false;">いいね</a> <a href="#tab5"
-				class="tab5" onclick="ChangeTab('tab5'); return false;">メディア</a>
-		</p>
-		<div id="tab1" class="tab">
-			<section class="card" th:each="tweet:${tweet}" style="float: center">
-				<div class="card-title">
-					<a th:text="${tweet.userId}"></a>
-				</div>
-				<div class="card-content">
-					<a th:text="${tweet.detail}">detail</a> <input type="hidden"
-						name="button_id" th:value="${tweet.tweetId}" />
-				</div>
-				<div class="card-button">
-					<a><input type="submit" name="reply" value="⇒" /></a> <a><input
-						type="submit" name="retweet" value="⇔" /></a> <a><input
-						type="submit" name="favorite" value="☆" /></a> <a><input
-						type="submit" name="block" value="🚫" /></a>
-				</div>
-			</section>
-		</div>
-		<div id="tab2" class="tab">
-			<form action="profile" method="POST">
-				<section class="profile_card" th:each="follow:${follow}"
-					style="float: center">
-					<div class="profile_card-name">
-						<a th:text="${follow.userName}"></a>
-					</div>
-					<div class="profile_card-id">
-						<input type="submit" name="follow_user_id"
-							th:value="${follow.userId}" />
-					</div>
-					<div class="profile_card-profile">
-						<a th:text="${follow.profile}"></a>
-					</div>
-				</section>
-			</form>
-		</div>
-		<div id="tab3" class="tab">
-			<form action="profile" method="POST">
-				<section class="profile_card" th:each="follower:${follower}"
-					style="float: center">
-					<div class="profile_card-name">
-						<a th:text="${follower.userName}"></a>
-					</div>
-					<div class="profile_card-id">
-						<input type="submit" name="follow_user_id"
-							th:value="${follower.userId}" />
-					</div>
-					<div class="profile_card-profile">
-						<a th:text="${follower.profile}"></a>
-					</div>
-				</section>
-			</form>
-		</div>
-		<div id="tab4" class="tab">
-			<section class="card" th:each="favorite:${favorite}"
+	<header>
+		<form action="profile" method="POST">
+			<section class="profile_card" th:each="user:${user}"
 				style="float: center">
-				<div class="card-title">
-					<a th:text="${favorite.userId}"></a>
+				<div class="profile_card-name">
+					<a th:text="${user.userName}"></a>
 				</div>
-				<div class="card-content">
-					<a th:text="${favorite.detail}">detail</a> <input type="hidden"
-						name="button_id" th:value="${favorite.tweetId}" />
+				<div class="profile_card-id">
+					<input type="submit" name="follow_user_id"
+						th:value="${user.userId}" />
 				</div>
-				<div class="card-button">
-					<a><input type="submit" name="reply" value="⇒" /></a> <a><input
-						type="submit" name="retweet" value="⇔" /></a> <a><input
-						type="submit" name="favorite" value="☆" /></a> <a><input
-						type="submit" name="block" value="🚫" /></a>
+				<div class="profile_card-profile">
+					<a th:text="${user.profile}"></a>
 				</div>
 			</section>
+		</form>
+		<form th:action="@{/logout}" method="post">
+			<button>ログアウト</button>
+		</form>
+		<div class="tabbox" style="float: center">
+			<p class="tabs">
+				<a href="#tab1" class="tab1" onclick="ChangeTab('tab1'); return false;">ツイート<br></br><span th:text="${count_tweet}"></span></a> 
+				<a href="#tab2" class="tab2" onclick="ChangeTab('tab2'); return false;">フォロー<br></br><span th:text="${count_follow}"></span></a> 
+				<a href="#tab3" class="tab3" onclick="ChangeTab('tab3'); return false;">フォロワー<br></br><span th:text="${count_follower}"></span></a> 
+				<a href="#tab4" class="tab4" onclick="ChangeTab('tab4'); return false;">いいね<br></br><span th:text="${count_favorite}"></span></a> 
+				<a href="#tab5"	class="tab5" onclick="ChangeTab('tab5'); return false;">メディア</a>
+			</p>
+			<div id="tab1" class="tab">
+				<section class="card" th:each="tweet:${tweet}" style="float: center">
+					<div class="card-title">
+						<a th:text="${tweet.userId}"></a>
+					</div>
+					<div class="card-content">
+						<a th:text="${tweet.detail}">detail</a> <input type="hidden"
+							name="button_id" th:value="${tweet.tweetId}" />
+					</div>
+					<div class="card-button">
+						<a><input type="submit" name="reply" value="⇒" /></a> <a><input
+							type="submit" name="retweet" value="⇔" /></a> <a><input
+							type="submit" name="favorite" value="☆" /></a> <a><input
+							type="submit" name="block" value="🚫" /></a>
+					</div>
+				</section>
+			</div>
+			<div id="tab2" class="tab">
+				<form action="profile" method="POST">
+					<section class="profile_card" th:each="follow:${follow}"
+						style="float: center">
+						<div class="profile_card-name">
+							<a th:text="${follow.userName}"></a>
+						</div>
+						<div class="profile_card-id">
+							<input type="submit" name="follow_user_id"
+								th:value="${follow.userId}" />
+						</div>
+						<div class="profile_card-profile">
+							<a th:text="${follow.profile}"></a>
+						</div>
+					</section>
+				</form>
+			</div>
+			<div id="tab3" class="tab">
+				<form action="profile" method="POST">
+					<section class="profile_card" th:each="follower:${follower}"
+						style="float: center">
+						<div class="profile_card-name">
+							<a th:text="${follower.userName}"></a>
+						</div>
+						<div class="profile_card-id">
+							<input type="submit" name="follow_user_id"
+								th:value="${follower.userId}" />
+						</div>
+						<div class="profile_card-profile">
+							<a th:text="${follower.profile}"></a>
+						</div>
+					</section>
+				</form>
+			</div>
+			<div id="tab4" class="tab">
+				<section class="card" th:each="favorite:${favorite}"
+					style="float: center">
+					<div class="card-title">
+						<a th:text="${favorite.userId}"></a>
+					</div>
+					<div class="card-content">
+						<a th:text="${favorite.detail}">detail</a> <input type="hidden"
+							name="button_id" th:value="${favorite.tweetId}" />
+					</div>
+					<div class="card-button">
+						<a><input type="submit" name="reply" value="⇒" /></a> <a><input
+							type="submit" name="retweet" value="⇔" /></a> <a><input
+							type="submit" name="favorite" value="☆" /></a> <a><input
+							type="submit" name="block" value="🚫" /></a>
+					</div>
+				</section>
+			</div>
+			<div id="tab5" class="tab">
+				<p>(タブ5の中身。いくつでも増やせます。)</p>
+			</div>
 		</div>
-		<div id="tab5" class="tab">
-			<p>(タブ5の中身。いくつでも増やせます。)</p>
-		</div>
-	</div>
+	</header>
 
 	<script type="text/javascript">
 		// デフォルトのタブを選択
@@ -287,23 +318,6 @@ div.tab p {
 					name="timeLine" value="タイムライン表示" /></td>
 			</tr>
 		</table>
-	</form>
-
-	<section class="profile_card" th:each="user:${user}" style="float: center">
-		<div class="profile_card-name">
-			<a th:text="${user.userName}"></a>
-		</div>
-		<div class="profile_card-id">
-			<input type="submit" name="follow_user_id"
-				th:value="${user.userId}" />
-		</div>
-		<div class="profile_card-profile">
-			<a th:text="${user.profile}"></a>
-		</div>
-	</section>
-
-	<form th:action="@{/logout}" method="post">
-		<button>ログアウト</button>
 	</form>
 </body>
 </html>

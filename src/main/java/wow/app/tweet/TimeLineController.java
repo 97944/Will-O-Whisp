@@ -51,7 +51,7 @@ public class TimeLineController {
 		}
 		model.addAttribute("user", userService.loadUserByUserId(userId));
 		model.addAttribute("timeLine", timeLine);
-		model.addAttribute("count_follow",follow.size());
+		model.addAttribute("count_follow", follow.size());
 
 		// ログインユーザーのツイート数をDBから取ってきて、モデルにセット
 		List<Tweet> tweet = tweetService.findTimeLine(userId);
@@ -66,36 +66,23 @@ public class TimeLineController {
 		return "timeline/timeLine";
 	}
 
-	@RequestMapping(value="pro", method = RequestMethod.POST)
-	String dispProfile(@RequestParam("user_id") String userId,RedirectAttributes attributes) {
-		attributes.addAttribute("userId",userId);
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
+	String profile(@RequestParam("timeLine_user_id") String userId, RedirectAttributes attributes) {
+		attributes.addAttribute("userId", userId);
 		return "redirect:/profile";
 	}
-
-	@RequestMapping(params = "search", method = RequestMethod.POST)
-	String dispSearch(@RequestParam("searchText") String text, RedirectAttributes attributes) {
-		attributes.addAttribute("text", text);
-		return "redirect:/search";
-	}
-	@RequestMapping(value="add", method = RequestMethod.POST)
-	String addTweet(@RequestParam("tweet") String detail,@RequestParam("tweet_user_id") String userId,RedirectAttributes attributes){
-    	
-    	LocalDateTime now = LocalDateTime.now();
-    	String tweetId = userId + now;
-    	Tweet tweet = new Tweet();
-    	tweet.setTweetId(tweetId);
-    	tweet.setUserId(userId);
-    	tweet.setDetail(detail);
-    	tweet.setTime(now);
-    	tweetService.addTweet(tweet);
-    	attributes.addAttribute("userId",userId);
-    	
-    	return "redirect:/timeLine";
-    }    
-	@RequestMapping(value="/profile", method = RequestMethod.POST)
-	String profile(@RequestParam("timeLine_user_id") String userId ,RedirectAttributes attributes) {
+	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
+	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId, @RequestParam("favorite_user_id") String userId,RedirectAttributes attributes){
+		LocalDateTime now = LocalDateTime.now();
+		String favoriteId = now + userId;
+		Favorite favorite = new Favorite();
+		favorite.setFavoriteId(favoriteId);
+		favorite.setUserId(userId);
+		favorite.setFavoriteTweet(favoriteTweetId);
+		
+		tweetService.favoriteTweet(favorite);
 		attributes.addAttribute("userId",userId);
+		
 		return "redirect:/profile";
 	}
-
 }

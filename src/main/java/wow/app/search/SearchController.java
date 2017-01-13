@@ -1,4 +1,5 @@
 package wow.app.search;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,21 @@ public class SearchController {
     UserService userService;
  
     @RequestMapping(method = RequestMethod.GET)
-    String search(@Param("text") String text,Model model){
-    	List<User> user = userService.searchByUserId(text);
+    String search(@Param("text") String text,@Param("userId") String userId,Model model){
+    	// アクセスしてきたユーザー情報を取得
+    	User user = userService.loadUserByUserId(userId);
     	model.addAttribute("user",user);
+    	
+    	// text内容が含まれるユーザーを検索する
+    	List<User> searchUser = userService.searchByUserId(text);
+    	model.addAttribute("search_user",searchUser);
+    	
+    	// text内容が含まれるツイートを検索する
+    	List<Tweet> searchTweet = tweetService.searchTweet(text);
+    	model.addAttribute("search_tweet",searchTweet);
+    	
+    	// 検索文字列をセット
+    	model.addAttribute("search_text",text);
     	
     	return "search/search";
     }
@@ -42,6 +55,4 @@ public class SearchController {
     	model.addAttribute("user",user);
     	return "redirect:/profile";
     }
-    
-    
 }

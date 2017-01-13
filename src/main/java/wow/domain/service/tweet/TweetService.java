@@ -40,6 +40,14 @@ public class TweetService {
 		return tweet;
 	}
 	
+	public List<Tweet> searchTweet(String text){
+		return tweetRepository.findByDetailContainsOrderByTimeDesc(text);
+	}
+	
+	public void favoriteTweet(Favorite favorite){
+		favoriteTweetRepository.save(favorite);
+	}
+	
 	public int countFavorite(String favoriteTweet){
 		List<Favorite> favorite = favoriteTweetRepository.findByFavoriteTweet(favoriteTweet);
 		

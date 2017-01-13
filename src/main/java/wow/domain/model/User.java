@@ -3,8 +3,7 @@ package wow.domain.model;
 import java.io.File;
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name="user_master")
 public class User implements Serializable{
@@ -21,6 +20,9 @@ public class User implements Serializable{
     private File topPicture;
     private File headPicture;
     private int close;
+    
+    /*@Enumerated(EnumType.STRING)
+    private RoleName roleName;*/
     
     public String getUserId() {
         return userId;

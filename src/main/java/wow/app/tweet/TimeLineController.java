@@ -1,13 +1,18 @@
 package wow.app.tweet;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -18,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
+import wow.domain.service.user.WowUserDetails;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
 import wow.domain.model.Tweet;
@@ -33,11 +39,11 @@ public class TimeLineController {
 	UserService userService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	String listTweet(@Param("userId") String userId, Model model) {
-		System.out.println("タイムライン" + userId);
-		if (userId == null) {
-			userId = "admin";
-		}
+	String listTweet(@AuthenticationPrincipal WowUserDetails userDetails, Model model) {
+		System.out.println("タイムライン" + userDetails.getUser().getUserName());
+		
+		String userId = userDetails.getUser().getUserId();
+		
 		List<Follow> follow = userService.loadFollowUserByUserId(userId);
 		// フォローユーザをDBから取ってきて、モデルにセット
 		System.out.println("フォロー数" + follow.size());
@@ -49,7 +55,9 @@ public class TimeLineController {
 				timeLine.add(dummyList.get(j));
 			}
 		}
-		model.addAttribute("user", userService.loadUserByUserId(userId));
+		Collections.sort(timeLine,new TimeLineComparator());
+		
+		model.addAttribute("login_user",userDetails.getUser());
 		model.addAttribute("timeLine", timeLine);
 		model.addAttribute("count_follow", follow.size());
 
@@ -68,12 +76,17 @@ public class TimeLineController {
 
 	@RequestMapping(value = "/profile", method = RequestMethod.POST)
 	String profile(@RequestParam("timeLine_user_id") String userId, RedirectAttributes attributes) {
+		
 		attributes.addAttribute("userId", userId);
+		System.out.println("プロフィール表示：" + userId);
 		return "redirect:/profile";
 	}
 	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
 	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId, @RequestParam("favorite_user_id") String userId,RedirectAttributes attributes){
-		LocalDateTime now = LocalDateTime.now();
+		
+		String time = LocalDateTime.now().toString();
+		LocalDateTime now = LocalDateTime.parse(time,DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
+		System.out.println(now);
 		String favoriteId = now + userId;
 		Favorite favorite = new Favorite();
 		favorite.setFavoriteId(favoriteId);

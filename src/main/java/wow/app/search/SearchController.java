@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
+import wow.domain.service.user.WowUserDetails;
 import wow.domain.model.Tweet;
 import wow.domain.model.User;
  
@@ -30,10 +32,10 @@ public class SearchController {
     UserService userService;
  
     @RequestMapping(method = RequestMethod.GET)
-    String search(@Param("text") String text,@Param("userId") String userId,Model model){
+    String search(@Param("text") String text,@AuthenticationPrincipal WowUserDetails userDetails,Model model){
     	// アクセスしてきたユーザー情報を取得
-    	User user = userService.loadUserByUserId(userId);
-    	model.addAttribute("user",user);
+    	User user = userDetails.getUser();
+    	model.addAttribute("login_user",user);
     	
     	// text内容が含まれるユーザーを検索する
     	List<User> searchUser = userService.searchByUserId(text);

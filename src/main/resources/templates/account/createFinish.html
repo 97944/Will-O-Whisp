@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>アカウント作成</title>
+</head>
+<body>
+	<h3>アカウント 作成</h3>
+<div class="container">
+    <h1>ユーザー登録完了</h1>
+
+    <p>
+        ようこそ <span th:text="${user.userName}">ほげ</span>さん。<br/>
+        <a th:href="@{/loginForm}" href="../login/loginForm.html">こちら</a>からログインしてください。
+    </p>
+</div>
+</body>
+</html>

@@ -224,7 +224,7 @@ div.tab p {
 <meta charset="UTF-8" />
 <title>Wow</title>
 </head>
-<body bgcolor="#EEEEEE">
+<body bgcolor="#CCCCCC">
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -235,26 +235,25 @@ div.tab p {
 						class="icon-bar"></span>
 				</button>
 				<form action="header/timeLine" method="post" name="form1">
-					<a class="navbar-brand" href="#" onClick="document.form1.submit();">
-						Wow </a> <input type="hidden" name="timeLine"
-						th:value="${user.userId}" />
+					<a class="navbar-brand" href="#" onClick="document.form1.submit();"> Wow </a>
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 				</form>
 			</div>
 
 			<div class="collapse navbar-collapse" id="navbarEexample3">
 				<form action="header/pro" method="POST" name="form2">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#"
-							onClick="document.form2.submit();">Profile</a> <input
-							type="hidden" name="user_id" th:value="${user.userId}" /></li>
+						<li class="active">
+							<a href="#" onClick="document.form2.submit();">Profile</a>
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						</li>
 					</ul>
 				</form>
 				<form class="navbar-form navbar-left" role="search"
 					action="header/search" method="POST">
 					<div class="form-group">
-						<input type="text" class="form-control" placeholder="検索キーワード"
-							name="searchText" /> <input type="hidden" name="search_user_id"
-							th:value="${user.userId}" />
+						<input type="text" class="form-control" placeholder="検索キーワード" name="searchText" />
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 					</div>
 					<button type="submit" class="btn btn-default" name="search">検索</button>
 				</form>
@@ -264,7 +263,11 @@ div.tab p {
 							class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#">設定</a></li>
-							<li><a href="#">ログアウト</a></li>
+							<li>
+								<form th:action="@{/logout}" method="POST" name="form3">
+									<a href="#" onClick="document.form3.submit();">ログアウト</a>
+								</form>
+							</li>
 						</ul></li>
 				</ul>
 
@@ -295,8 +298,7 @@ div.tab p {
 									<button type="button" class="btn btn-default"
 										data-dismiss="modal">キャンセル</button>
 									<button type="submit" class="btn btn-primary">ツイート</button>
-									<input type="hidden" name="tweet_user_id"
-										th:value="${user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 								</div>
 							</div>
 						</div>
@@ -307,17 +309,17 @@ div.tab p {
 	</nav>
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-3">
+			<div class="col-md-3">
 				<form action="timeLine" method="POST">
-					<section class="profile_card" th:each="user:${user}">
+					<section class="profile_card" th:each="login_user:${login_user}">
 						<div class="profile_card-name">
-							<a th:text="${user.userName}"></a>
+							<a th:text="${login_user.userName}"></a>
 						</div>
 						<div class="profile_card-id">
-							<input type="submit" name="user_id" th:value="${user.userId}" />
+							<input type="submit" name="user_id" th:value="${login_user.userId}" />
 						</div>
 						<div class="profile_card-profile">
-							<a th:text="${user.profile}"></a>
+							<a th:text="${login_user.profile}"></a>
 						</div>
 						<table class="profile_card-count" width="200">
 							<tr>
@@ -329,12 +331,12 @@ div.tab p {
 					</section>
 				</form>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-md-6">
 				<section class="card" th:each="timeLine:${timeLine}">
 					<form action="timeLine/profile" method="POST">
 						<div class="card-title">
-							<input type="submit" name="timeLine_user_id"
-								th:value="${timeLine.userId}" />
+							<input type="submit" name="timeLine_user_id" th:value="${timeLine.userId}" />
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						</div>
 					</form>
 					<div class="card-content">
@@ -345,25 +347,21 @@ div.tab p {
 						<form action="timeLine/reply" method="POST">
 							<a><input type="submit" name="reply" value="⇒" /></a> <input
 								type="hidden" name="reply_tweet_id"
-								th:value="${timeLine.tweetId}" /> <input type="hidden"
-								name="reply_user_id" th:value="${user.userId}" />
+								th:value="${timeLine.tweetId}" />
 						</form>
 						<form action="timeLine/retweet" method="POST">
 							<a><input type="submit" name="retweet" value="⇔" /></a> <input
 								type="hidden" name="retweet_id" th:value="${timeLine.tweetId}" />
-							<input type="hidden" name="retweet_user_id"
-								th:value="${user.userId}" />
 						</form>
 						<form action="timeLine/favorite" method="POST">
 							<a><input type="submit" name="favorite" value="☆" /></a> <input
 								type="hidden" name="favorite_tweet_id"
-								th:value="${timeLine.tweetId}" /> <input type="hidden"
-								name="favorite_user_id" th:value="${user.userId}" />
+								th:value="${timeLine.tweetId}" />
+								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						</form>
 						<form action="timeLine/block" method="POST">
 							<a><input type="submit" name="block" value="🚫" /></a> <input
 								type="hidden" name="block_user_id" th:value="${timeLine.userId}" />
-							<input type="hidden" name="user_id" th:value="${user.userId}" />
 						</form>
 					</div>
 				</section>

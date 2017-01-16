@@ -21,8 +21,8 @@ public class User implements Serializable{
     private File headPicture;
     private int close;
     
-    /*@Enumerated(EnumType.STRING)
-    private RoleName roleName;*/
+    @Enumerated(EnumType.STRING)
+    private RoleName roleName;
     
     public String getUserId() {
         return userId;
@@ -78,5 +78,13 @@ public class User implements Serializable{
     
     public void setClose(int close){
     	this.close = close;
+    }
+    
+    public RoleName getRoleName(){
+    	return roleName;
+    }
+    
+    public void setRoleName(RoleName roleName){
+    	this.roleName = roleName;
     }
 }

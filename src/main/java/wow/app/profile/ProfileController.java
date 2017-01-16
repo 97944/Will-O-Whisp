@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
+import wow.domain.service.user.WowUserDetails;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
 import wow.domain.model.Tweet;
@@ -35,15 +37,19 @@ public class ProfileController {
 	TweetService tweetService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	String listUser(@Param("userId") String userId, Model model) {
+	String listUser(@Param("userId") String userId, @AuthenticationPrincipal WowUserDetails userDetails, Model model) {
 		if (userId == null) {
 			userId = "admin";
 		}
-		// ログインユーザー情報をDBから取ってきて、モデルにセット
+		// ログインユーザー情報をモデルにセット
+		User loginUser = userDetails.getUser();
+		model.addAttribute("login_user", loginUser);
+
+		// ユーザー情報をDBから取ってきて、モデルにセット
 		User user = userService.loadUserByUserId(userId);
 		model.addAttribute("user", user);
 
-		// ログインユーザーのツイートをDBから取ってきて、モデルにセット
+		// ユーザーのツイートをDBから取ってきて、モデルにセット
 		List<Tweet> tweet = tweetService.findTimeLine(userId);
 		model.addAttribute("tweet", tweet);
 		model.addAttribute("count_tweet", tweet.size());
@@ -76,6 +82,29 @@ public class ProfileController {
 		System.out.println("お気に入り数" + favorite.size());
 
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
+		
+		// ログインユーザーのフォローの有無
+		List<Follow> loginUserFollow = userService.loadFollowUserByUserId(userId);
+		List<User> loginFollowUser = new ArrayList<User>();
+		for (int i = 0; i < follow.size(); i++) {
+			loginFollowUser.add(userService.loadUserByUserId(loginUserFollow.get(i).getFollowUserId()));
+		}
+		
+		// ログインユーザーorフォローユーザーorNotフォローユーザーか判断
+		System.out.println("プロフィールのユーザーID：" + userId + "　ログインユーザーのユーザーID：" + userDetails.getUser().getUserId());
+		if (userId.equals(userDetails.getUser().getUserId())) {
+			model.addAttribute("switch","ログイン");
+		}else{
+			List<String> followId = new ArrayList<String>();
+			for (int i = 0; i < loginUserFollow.size(); i++) {
+				followId.add(loginUserFollow.get(i).getFollowUserId());
+			}
+			if(followId.contains(userId)){
+				model.addAttribute("switch","フォロー済み");
+			}else{
+				model.addAttribute("switch","未フォロー");
+			}
+		}
 
 		return "profile/profile";
 	}
@@ -93,18 +122,21 @@ public class ProfileController {
 		attributes.addAttribute("userId", followerId);
 		return "redirect:/profile";
 	}
+
 	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
-	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId, @RequestParam("favorite_user_id") String userId,RedirectAttributes attributes){
+	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId,
+			@AuthenticationPrincipal WowUserDetails userDetails, RedirectAttributes attributes) {
 		LocalDateTime now = LocalDateTime.now();
+		String userId = userDetails.getUser().getUserId();
 		String favoriteId = now + userId;
 		Favorite favorite = new Favorite();
 		favorite.setFavoriteId(favoriteId);
 		favorite.setUserId(userId);
 		favorite.setFavoriteTweet(favoriteTweetId);
-		
+
 		tweetService.favoriteTweet(favorite);
-		attributes.addAttribute("userId",userId);
-		
+		attributes.addAttribute("userId", userId);
+
 		return "redirect:/profile";
 	}
 

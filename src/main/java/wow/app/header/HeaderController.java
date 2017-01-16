@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
+import wow.domain.service.user.WowUserDetails;
 import wow.domain.model.Tweet;
 
 @Controller
@@ -31,26 +33,26 @@ public class HeaderController {
 
 	// ヘッダーで使用するメソッド
 	@RequestMapping(value = "pro", method = RequestMethod.POST)
-	String dispProfile(@RequestParam("user_id") String userId, RedirectAttributes attributes) {
+	String dispProfile(@AuthenticationPrincipal WowUserDetails userDetails, RedirectAttributes attributes) {
+		String userId = userDetails.getUser().getUserId();
 		attributes.addAttribute("userId", userId);
 		return "redirect:/profile";
 	}
 
 	// ヘッダーで使用するメソッド
 	@RequestMapping(value = "search", method = RequestMethod.POST)
-	String dispSearch(@RequestParam("searchText") String text, @RequestParam("search_user_id") String userId,
+	String dispSearch(@RequestParam("searchText") String text,@AuthenticationPrincipal WowUserDetails userDetails,
 			RedirectAttributes attributes) {
 		attributes.addAttribute("text", text);
-		attributes.addAttribute("userId", userId);
 		return "redirect:/search";
 	}
 
 	// ヘッダーで使用するメソッド
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	String addTweet(@RequestParam("tweet") String detail, @RequestParam("tweet_user_id") String userId,
-			RedirectAttributes attributes) {
+	String addTweet(@RequestParam("tweet") String detail,@AuthenticationPrincipal WowUserDetails userDetails) {
 
 		LocalDateTime now = LocalDateTime.now();
+		String userId = userDetails.getUser().getUserId();
 		String tweetId = userId + now;
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(tweetId);
@@ -58,16 +60,13 @@ public class HeaderController {
 		tweet.setDetail(detail);
 		tweet.setTime(now);
 		tweetService.addTweet(tweet);
-		attributes.addAttribute("userId", userId);
-
+		
 		return "redirect:/timeLine";
 	}
 
 	// ヘッダーで使用するメソッド
 	@RequestMapping(value = "timeLine", method = RequestMethod.POST)
-	String dispTweet(@RequestParam("timeLine") String userId, RedirectAttributes attributes) {
-		System.out.println("プロフィール" + userId);
-		attributes.addAttribute("userId", userId);
+	String dispTweet(@AuthenticationPrincipal WowUserDetails userDetails) {
 		return "redirect:/timeLine";
 	}
 

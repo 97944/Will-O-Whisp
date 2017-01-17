@@ -84,7 +84,7 @@ public class ProfileController {
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
 		
 		// ログインユーザーのフォローの有無
-		List<Follow> loginUserFollow = userService.loadFollowUserByUserId(userId);
+		List<Follow> loginUserFollow = userService.loadFollowUserByUserId(userDetails.getUser().getUserId());
 		List<User> loginFollowUser = new ArrayList<User>();
 		for (int i = 0; i < follow.size(); i++) {
 			loginFollowUser.add(userService.loadUserByUserId(loginUserFollow.get(i).getFollowUserId()));
@@ -96,8 +96,10 @@ public class ProfileController {
 			model.addAttribute("switch","ログイン");
 		}else{
 			List<String> followId = new ArrayList<String>();
+			System.out.println("フォローリスト");
 			for (int i = 0; i < loginUserFollow.size(); i++) {
 				followId.add(loginUserFollow.get(i).getFollowUserId());
+				System.out.println(loginUserFollow.get(i).getFollowUserId() + " " + userId);
 			}
 			if(followId.contains(userId)){
 				model.addAttribute("switch","フォロー済み");
@@ -108,21 +110,22 @@ public class ProfileController {
 
 		return "profile/profile";
 	}
-
+	
+	// フォローユーザリストからpostした時
 	@RequestMapping(params = "follow_user_id", method = RequestMethod.POST)
-	String follow(@RequestParam("follow_user_id") String followId, RedirectAttributes attributes) {
+	String followJump(@RequestParam("follow_user_id") String followId, RedirectAttributes attributes) {
 		System.out.println(followId);
 		attributes.addAttribute("userId", followId);
 		return "redirect:/profile";
 	}
-
+	//　フォロワーリストからpostした時
 	@RequestMapping(params = "follower_user_id", method = RequestMethod.POST)
-	String follower(@RequestParam("follower_user_id") String followerId, RedirectAttributes attributes) {
+	String followerJump(@RequestParam("follower_user_id") String followerId, RedirectAttributes attributes) {
 		System.out.println(followerId);
 		attributes.addAttribute("userId", followerId);
 		return "redirect:/profile";
 	}
-
+	//　お気に入り
 	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
 	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId,
 			@AuthenticationPrincipal WowUserDetails userDetails, RedirectAttributes attributes) {
@@ -132,12 +135,46 @@ public class ProfileController {
 		Favorite favorite = new Favorite();
 		favorite.setFavoriteId(favoriteId);
 		favorite.setUserId(userId);
-		favorite.setFavoriteTweet(favoriteTweetId);
+		favorite.setFavoriteTweetId(favoriteTweetId);
 
 		tweetService.favoriteTweet(favorite);
 		attributes.addAttribute("userId", userId);
 
 		return "redirect:/profile";
 	}
-
+	
+	// ログインユーザーの場合
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	String profileEdit(@AuthenticationPrincipal WowUserDetails userDetails){
+		return "redirect:/edit";
+	}
+	// フォローしてるユーザーの場合
+	@RequestMapping(value = "/reset", method = RequestMethod.POST)
+	String followReset(@AuthenticationPrincipal WowUserDetails userDetails,
+			@RequestParam("reset_user_id") String resetUserId,RedirectAttributes attributes){
+		List<Follow> follow = userService.loadFollowUserByUserId(userDetails.getUser().getUserId());
+		for(int i=0;i<follow.size();i++){
+			if(follow.get(i).getFollowUserId().equals(resetUserId)){
+				userService.deleteFollowByFollowId(follow.get(i).getFollowId());
+				break;
+			}
+		}
+		return "redirect:/profile";
+	}
+	// フォローしてないユーザーの場合
+	@RequestMapping(value = "/following", method = RequestMethod.POST)
+	String follow(@AuthenticationPrincipal WowUserDetails userDetails,
+			@RequestParam("following_user_id") String followingUserId,RedirectAttributes attributes){
+		System.out.println("フォロー開始");
+		LocalDateTime time = LocalDateTime.now();
+		String followId = userDetails.getUser().getUserId() + time;
+		Follow follow = new Follow();
+		follow.setFollowId(followId);
+		follow.setUserId(userDetails.getUser().getUserId());
+		follow.setFollowUserId(followingUserId);
+		
+		userService.following(follow);
+		
+		return "redirect:/profile";
+	}
 }

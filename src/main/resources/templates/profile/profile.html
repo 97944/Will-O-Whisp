@@ -277,10 +277,15 @@ div.tab p {
 						class="dropdown-toggle" data-toggle="dropdown" role="button">○<span
 							class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">設定</a></li>
 							<li>
-								<form th:action="@{/logout}" method="POST" name="form3">
-									<a href="#" onClick="document.form3.submit();">ログアウト</a>
+								<form action="header/edit" method="POST" name="form3">
+									<a href="#" onClick="document.form3.submit();">設定</a>
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+							</li>
+							<li>
+								<form th:action="@{/logout}" method="POST" name="form4">
+									<a href="#" onClick="document.form4.submit();">ログアウト</a>
 								</form>
 							</li>
 						</ul></li>
@@ -457,14 +462,23 @@ div.tab p {
 				</div>
 			</div>
 			<div class="col-md-3">
-				<form action="profile/follow" method="POST">
-					<div th:switch="${switch}">
+				<div th:switch="${switch}">
+					<form action="profile/login" method="POST">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						<button class="btn btn-default" th:case="ログイン" >編集</button>
+					</form>
+					<form action="profile/reset" method="POST">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						<input type="hidden" name="reset_user_id" th:value="${user.userId}" />
 						<button class="btn btn-danger" th:case="フォロー済み">フォロー解除</button>
+					</form>
+					<form action="profile/following" method="POST">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						<input type="hidden" name="following_user_id" th:value="${user.userId}" />
 						<button class="btn btn-primary" th:case="未フォロー">フォローする</button>
-						<p th:case="*">対象なし</p>
-					</div>
-				</form>
+					</form>
+					<p th:case="*"></p>
+				</div>
 			</div>
 		</div>
 	</div>

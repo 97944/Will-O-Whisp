@@ -10,5 +10,5 @@ import wow.domain.model.Follow;
 
 @Repository
 public interface BlockUserRepository extends JpaRepository<Block, String> {
-	public List<Block> findByBlockId(String userId);
+	public List<Block> findByUserId(String userId);
 }

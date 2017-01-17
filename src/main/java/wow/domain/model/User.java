@@ -19,7 +19,7 @@ public class User implements Serializable{
     private String profile;
     private File topPicture;
     private File headPicture;
-    private int close;
+    private int lock;
     
     @Enumerated(EnumType.STRING)
     private RoleName roleName;
@@ -72,12 +72,12 @@ public class User implements Serializable{
     	this.headPicture = headPicture;
     }
     
-    public int getClose(){
-    	return close;
+    public int getLock(){
+    	return lock;
     }
     
-    public void setClose(int close){
-    	this.close = close;
+    public void setLock(int lock){
+    	this.lock = lock;
     }
     
     public RoleName getRoleName(){

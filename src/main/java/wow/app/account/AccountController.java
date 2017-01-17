@@ -52,7 +52,9 @@ public class AccountController {
 	    user.setPassword(passwordHash);
 	    
 		userService.create(user);
-		
+		System.out.println("アカウント作成完了");
+		System.out.println("ハッシュ化前:" + pass);
+		System.out.println("ハッシュ化後：" + user.getPassword());
 		attributes.addFlashAttribute("user",user);
         return "redirect:/account/create?finish";
 	}

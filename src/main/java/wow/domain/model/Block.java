@@ -9,7 +9,7 @@ public class Block {
     @Id
     private String blockId;
     private String userId;
-    private String blockUser;
+    private String blockUserId;
    
  
     public String getBlockId() {
@@ -28,12 +28,12 @@ public class Block {
         this.userId = userId;
     }
     
-    public String getBlockUser(){
-    	return blockUser;
+    public String getBlockUserId(){
+    	return blockUserId;
     }
     
-    public void setBlockUser(String blockUser){
-    	this.blockUser = blockUser;
+    public void setBlockUserId(String blockUserId){
+    	this.blockUserId = blockUserId;
     }
     
 }

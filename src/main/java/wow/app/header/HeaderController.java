@@ -31,7 +31,7 @@ public class HeaderController {
 		return "header/header";
 	}
 
-	// ヘッダーで使用するメソッド
+	// ログインユーザーのプロフィール表示
 	@RequestMapping(value = "pro", method = RequestMethod.POST)
 	String dispProfile(@AuthenticationPrincipal WowUserDetails userDetails, RedirectAttributes attributes) {
 		String userId = userDetails.getUser().getUserId();
@@ -39,7 +39,7 @@ public class HeaderController {
 		return "redirect:/profile";
 	}
 
-	// ヘッダーで使用するメソッド
+	// 検索
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	String dispSearch(@RequestParam("searchText") String text,@AuthenticationPrincipal WowUserDetails userDetails,
 			RedirectAttributes attributes) {
@@ -47,7 +47,7 @@ public class HeaderController {
 		return "redirect:/search";
 	}
 
-	// ヘッダーで使用するメソッド
+	// ツイート
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	String addTweet(@RequestParam("tweet") String detail,@AuthenticationPrincipal WowUserDetails userDetails) {
 
@@ -64,10 +64,17 @@ public class HeaderController {
 		return "redirect:/timeLine";
 	}
 
-	// ヘッダーで使用するメソッド
+	// タイムライン表示
 	@RequestMapping(value = "timeLine", method = RequestMethod.POST)
 	String dispTweet(@AuthenticationPrincipal WowUserDetails userDetails) {
 		return "redirect:/timeLine";
 	}
+	
+	// プロフィール編集
+	@RequestMapping(value = "edit", method = RequestMethod.POST)
+	String edit(){
+		return "redirect:/edit";
+	}
+	
 
 }

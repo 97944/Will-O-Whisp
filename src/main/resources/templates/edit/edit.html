@@ -11,6 +11,9 @@
 		// 全部消す
 		document.getElementById('tab1').style.display = 'none';
 		document.getElementById('tab2').style.display = 'none';
+		document.getElementById('tab3').style.display = 'none';
+		document.getElementById('tab4').style.display = 'none';
+		document.getElementById('tab5').style.display = 'none';
 		// 指定箇所のみ表示
 		document.getElementById(tabname).style.display = 'block';
 	}
@@ -220,6 +223,26 @@ div.tab p {
 	text-align: center;
 	color: #333;
 }
+.block_card {
+	word-wrap: break-word;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+	float: center;
+	overflow: hidden;
+	width: 80%;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+}
+.block_card-name {
+	font-size: 10px;
+}
+.block_card-button {
+	font-size: 10px;
+}
+
 
 .footer {
 	position: absolute;
@@ -229,17 +252,12 @@ div.tab p {
 	height: 60px;
 	background-color: #f5f5f5;
 }
-.search_text {
-	background-color: #CCFFFF;
-	width 100%;
-	text-align: center;
-	font-size: 40px;
-}
 </style>
 <meta charset="UTF-8" />
-<title th:text="${search_text}+'-Wow検索'"></title>
+
+<title th:text="${login_user.userName}+'(@'+${login_user.userId} +')さん'"></title>
 </head>
-<body bgcolor="#CCCCCC">
+<body bgcolor="#cccccc">
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -330,78 +348,59 @@ div.tab p {
 			</div>
 		</div>
 	</nav>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="search_text">
-					<span th:text="${search_text}"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3"></div>
-			<div class="col-md-6">
-				<div class="tabbox" style="float: center">
-					<p class="tabs">
-						<a href="#tab1" class="tab1"
-							onclick="ChangeTab('tab1'); return false;">ツイート<br></br> <span
-							th:text="${count_tweet}"></span></a> <a href="#tab2" class="tab2"
-							onclick="ChangeTab('tab2'); return false;">ユーザー名<br></br> <span
-							th:text="${count_follow}"></span></a>
-					</p>
-					<div id="tab1" class="tab">
-						<section class="card" th:each="search_tweet:${search_tweet}"
-							style="float: center">
-							<form action="timeLine/profile" method="POST">
-								<div class="card-title">
-									<input type="submit" name="timeLine_user_id" th:value="${search_tweet.userId}" />
-									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-								</div>
-							</form>
-							<div class="card-content">
-								<a th:text="${search_tweet.detail}">detail</a> <input
-									type="hidden" name="button_id"
-									th:value="${search_tweet.tweetId}" />
+	<form action="edit" method="POST">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<input type="text" name="user_name"
+						th:value="${login_user.userName}" />
+					<div th:text="'@'+${login_user.userId}"></div>
+					<input type="text" name="profile"
+						th:value="${login_user.profile}" />
+					<!-- 折り畳み展開ポインタ -->
+					<div
+						onclick="obj=document.getElementById('open').style; obj.display=(obj.display=='none')?'block':'none';">
+						<a style="cursor: pointer;">+ ブロック</a>
+					</div>
+					<!--// 折り畳み展開ポインタ -->
+
+					<!-- 折り畳まれ部分 -->
+					<div id="open" style="display: none; clear: both;">
+						<section class="block_card" th:each="block_user:${block_user}">
+							<div class="block_card-name">
+								<span th:text="${block_user.userName} +' '+ ${block_user.userId}"></span>
 							</div>
-							<div class="card-button" style="display: inline-flex">
-								<a><input type="submit" name="reply" value="⇒" /></a> <a><input
-									type="submit" name="retweet" value="⇔" /></a>
-								<form action="profile/favorite" method="POST">
-									<a><input type="submit" name="favorite" value="☆" /></a> <input
-										type="hidden" name="favorite_tweet_id"
-										th:value="${search_tweet.tweetId}" />
-										<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-								</form>
-								<a><input type="submit" name="block" value="🚫" /></a>
+							<div class="block_card-button">
+								<button type="submit" class="btn btn-danger">解除</button>
 							</div>
 						</section>
 					</div>
-					<div id="tab2" class="tab">
-						<form action="search" method="POST">
-							<section class="profile_card"
-								th:each="search_user:${search_user}">
-								<div class="profile_card-name">
-									<a th:text="${search_user.userName}"></a>
-								</div>
-								<div class="profile_card-id">
-									<input type="submit" name="user_id"
-										th:value="${search_user.userId}" />
-									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-								</div>
-								<div class="profile_card-profile">
-									<a th:text="${search_user.profile}"></a>
-								</div>
-							</section>
-						</form>
-					</div>
+					<!--// 折り畳まれ部分 -->
+				</div>
+
+				<div class="col-md-5">
+					<h3>パスワード変更</h3>
+					<input type="password" name="old_password" placeholder="現在のパスワード"/> <input
+						type="password" name="new_password" placeholder="新しいパスワード"/> <input type="password"
+						name="new_password2" placeholder="新しいパスワード"/>
+				</div>
+				<div class="col-md-4">
+					<h3>ツイッター</h3>
+					<input type="radio" name="lock" value="0" />公開 <input
+						type="radio" name="lock" value="1" />非公開
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-5">
+					<button type="submit" class="btn btn-default" name="cancel">キャンセル</button>
+				</div>
+				<div class="col-md-4">
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+					<button type="submit" class="btn btn-primary" name="save">変更を保存</button>
 				</div>
 			</div>
 		</div>
-	</div>
-	<script type="text/javascript">
-		// デフォルトのタブを選択
-		ChangeTab('tab1');
-	</script>
-
+	</form>
 </body>
 </html>

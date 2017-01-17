@@ -9,7 +9,7 @@ public class Favorite {
     @Id
     private String favoriteId;
     private String userId;
-    private String favoriteTweet;
+    private String favoriteTweetId;
    
  
     public String getFavoriteId() {
@@ -28,12 +28,12 @@ public class Favorite {
         this.userId = userId;
     }
     
-    public String getFavoriteTweet(){
-    	return favoriteTweet;
+    public String getFavoriteTweetId(){
+    	return favoriteTweetId;
     }
     
-    public void setFavoriteTweet(String favoriteTweet){
-    	this.favoriteTweet = favoriteTweet;
+    public void setFavoriteTweetId(String favoriteTweetId){
+    	this.favoriteTweetId = favoriteTweetId;
     }
     
 }

@@ -91,7 +91,7 @@ public class TimeLineController {
 		Favorite favorite = new Favorite();
 		favorite.setFavoriteId(favoriteId);
 		favorite.setUserId(userId);
-		favorite.setFavoriteTweet(favoriteTweetId);
+		favorite.setFavoriteTweetId(favoriteTweetId);
 		
 		tweetService.favoriteTweet(favorite);
 		attributes.addAttribute("userId",userId);

@@ -32,7 +32,7 @@ public class TweetService {
 		List<Tweet> tweet = new ArrayList<Tweet>();
 		List<Tweet> dummyList = null;
 		for(int i=0;i<favorite.size();i++){
-			dummyList = tweetRepository.findByTweetIdContainsOrderByTimeDesc(favorite.get(i).getFavoriteTweet());
+			dummyList = tweetRepository.findByTweetIdContainsOrderByTimeDesc(favorite.get(i).getFavoriteTweetId());
 			for(int j=0;j<dummyList.size();j++){
 				tweet.add(dummyList.get(j));
 			}
@@ -48,8 +48,8 @@ public class TweetService {
 		favoriteTweetRepository.save(favorite);
 	}
 	
-	public int countFavorite(String favoriteTweet){
-		List<Favorite> favorite = favoriteTweetRepository.findByFavoriteTweet(favoriteTweet);
+	public int countFavorite(String favoriteTweetId){
+		List<Favorite> favorite = favoriteTweetRepository.findByFavoriteTweetId(favoriteTweetId);
 		
 		return favorite.size();
 	}

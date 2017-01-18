@@ -26,6 +26,7 @@ import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
+import wow.domain.model.Retweet;
 import wow.domain.model.Tweet;
 import wow.domain.model.User;
 
@@ -41,9 +42,9 @@ public class TimeLineController {
 	@RequestMapping(method = RequestMethod.GET)
 	String listTweet(@AuthenticationPrincipal WowUserDetails userDetails, Model model) {
 		System.out.println("タイムライン" + userDetails.getUser().getUserName());
-		
+
 		String userId = userDetails.getUser().getUserId();
-		
+
 		List<Follow> follow = userService.loadFollowUserByUserId(userId);
 		// フォローユーザをDBから取ってきて、モデルにセット
 		System.out.println("フォロー数" + follow.size());
@@ -55,9 +56,9 @@ public class TimeLineController {
 				timeLine.add(dummyList.get(j));
 			}
 		}
-		Collections.sort(timeLine,new TimeLineComparator());
-		
-		model.addAttribute("login_user",userDetails.getUser());
+		Collections.sort(timeLine, new TimeLineComparator());
+
+		model.addAttribute("login_user", userDetails.getUser());
 		model.addAttribute("timeLine", timeLine);
 		model.addAttribute("count_follow", follow.size());
 
@@ -76,26 +77,75 @@ public class TimeLineController {
 
 	@RequestMapping(value = "/profile", method = RequestMethod.POST)
 	String profile(@RequestParam("timeLine_user_id") String userId, RedirectAttributes attributes) {
-		
+
 		attributes.addAttribute("userId", userId);
 		System.out.println("プロフィール表示：" + userId);
 		return "redirect:/profile";
 	}
+	@RequestMapping(value = "/profile2", method = RequestMethod.POST)
+	String profile2(@RequestParam("retweet_user_id") String userId, RedirectAttributes attributes) {
+
+		attributes.addAttribute("userId", userId);
+		System.out.println("プロフィール表示：" + userId);
+		return "redirect:/profile";
+	}
+
+
 	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
-	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId, @RequestParam("favorite_user_id") String userId,RedirectAttributes attributes){
-		
-		String time = LocalDateTime.now().toString();
-		LocalDateTime now = LocalDateTime.parse(time,DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
-		System.out.println(now);
-		String favoriteId = now + userId;
+	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId,
+			@AuthenticationPrincipal WowUserDetails userDetails, RedirectAttributes attributes) {
+
+		/*String time = LocalDateTime.now().toString();
+		LocalDateTime now = LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
+		System.out.println(now);*/
+		LocalDateTime now = LocalDateTime.now();
+		String favoriteId = userDetails.getUser().getUserId() + now;
 		Favorite favorite = new Favorite();
 		favorite.setFavoriteId(favoriteId);
-		favorite.setUserId(userId);
+		favorite.setUserId(userDetails.getUser().getUserId());
 		favorite.setFavoriteTweetId(favoriteTweetId);
-		
+
 		tweetService.favoriteTweet(favorite);
-		attributes.addAttribute("userId",userId);
-		
+		attributes.addAttribute("userId", userDetails.getUser().getUserId());
+
 		return "redirect:/profile";
+	}
+
+	@RequestMapping(value = "/retweet", method = RequestMethod.POST)
+	String retweet(@RequestParam("retweet_id") String retweetId, @AuthenticationPrincipal WowUserDetails userDetails) {
+		/*
+		 * String time = LocalDateTime.now().toString(); LocalDateTime now =
+		 * LocalDateTime.parse(time,DateTimeFormatter.
+		 * ofPattern("yyyy/MM/dd hh:mm:ss"));
+		 */
+		LocalDateTime now = LocalDateTime.now();
+		Tweet tweet = new Tweet();
+		String tweetId = userDetails.getUser().getUserId() + now;
+		tweet.setTweetId(tweetId);
+		tweet.setUserId(userDetails.getUser().getUserId());
+		tweet.setTime(now);
+		tweet.setRetweetId(retweetId);
+
+		tweetService.addTweet(tweet);
+		if (tweetService.searchRetweet(retweetId) == null) {
+			Retweet retweet = new Retweet();
+			retweet.setRetweetId(retweetId);
+			Tweet re = tweetService.searchTweetByTweetId(retweetId);
+			retweet.setUserId(re.getUserId());
+			retweet.setDetail(re.getDetail());
+			retweet.setTime(re.getTime());
+
+			tweetService.addRetweet(retweet);
+		}
+
+		return "redirect:/timeLine";
+	}
+	@RequestMapping(value="/remove",method = RequestMethod.POST)
+	String remove(@RequestParam("remove_id") String removeId,
+			@AuthenticationPrincipal WowUserDetails userDetails){
+		System.out.println(removeId);
+		tweetService.remove(removeId);
+		
+		return "redirect:/timeLine";
 	}
 }

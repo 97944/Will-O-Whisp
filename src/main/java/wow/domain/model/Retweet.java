@@ -15,15 +15,15 @@ import javax.persistence.MapsId;
 
 import wow.domain.model.converter.LocalDateTimeConverter;
  
-@Entity(name="tweet_record")
-public class Tweet implements Serializable{
+@Entity(name="retweet_record")
+public class Retweet implements Serializable{
  
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-    private String tweetId;
+    private String retweetId;
     private String userId;
     private String detail;
     @Column(nullable = false)
@@ -32,25 +32,12 @@ public class Tweet implements Serializable{
     private File media;
     private int relation;
     private String relationId;
-    private String retweetId;
     
     @ManyToOne
     @JoinColumn(name = "userId", insertable = false, updatable = false)
     @MapsId("userId")
     private User user;
     
-    @ManyToOne
-    @JoinColumn(name = "retweetId", insertable = false, updatable = false)
-    @MapsId("retweetId")
-    private Retweet retweet;
-    
-    public String getTweetId() {
-        return tweetId;
-    }
- 
-    public void setTweetId(String tweetId) {
-        this.tweetId = tweetId;
-    }
     
     public String getUserId() {
         return userId;
@@ -115,12 +102,5 @@ public class Tweet implements Serializable{
     public void setUser(User user){
     	this.user = user;
     }
-    
-    public Retweet getRetweet(){
-    	return retweet;
-    }
-    
-    public void setRetweet(Retweet retweet){
-    	this.retweet = retweet;
-    }
+   
 }

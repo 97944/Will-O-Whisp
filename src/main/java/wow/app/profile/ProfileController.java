@@ -2,6 +2,7 @@ package wow.app.profile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
+import wow.app.tweet.TimeLineComparator;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
 import wow.domain.model.Tweet;
@@ -77,6 +79,7 @@ public class ProfileController {
 
 		// いいねしたツイートをDBから取ってきて、モデルにセット
 		List<Tweet> favorite = tweetService.findFavoriteTweet(userId);
+		Collections.sort(favorite,new TimeLineComparator());
 		model.addAttribute("favorite", favorite);
 		model.addAttribute("count_favorite", favorite.size());
 		System.out.println("お気に入り数" + favorite.size());

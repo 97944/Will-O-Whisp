@@ -203,6 +203,26 @@ div.tab p {
 	text-align: center;
 	color: #333;
 }
+.block_card {
+	word-wrap: break-word;
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+	float: center;
+	overflow: hidden;
+	width: 80%;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px #ccc;
+}
+.block_card-name {
+	font-size: 10px;
+}
+.block_card-button {
+	font-size: 10px;
+}
+
 
 .footer {
 	position: absolute;

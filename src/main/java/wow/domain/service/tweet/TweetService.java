@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wow.domain.model.Favorite;
+import wow.domain.model.Retweet;
 import wow.domain.model.Tweet;
 import wow.domain.repository.tweet.FavoriteTweetRepository;
+import wow.domain.repository.tweet.RetweetRepository;
 import wow.domain.repository.tweet.TweetRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class TweetService {
 	@Autowired
 	FavoriteTweetRepository favoriteTweetRepository;
 	
+	@Autowired
+	RetweetRepository retweetRepository;
 	
 	public List<Tweet> findTimeLine(String userId){
 		return tweetRepository.findByUserIdContainsOrderByTimeDesc(userId);
@@ -43,6 +47,9 @@ public class TweetService {
 	public List<Tweet> searchTweet(String text){
 		return tweetRepository.findByDetailContainsOrderByTimeDesc(text);
 	}
+	public Tweet searchTweetByTweetId(String tweetId){
+		return tweetRepository.findByTweetId(tweetId);
+	}
 	
 	public void favoriteTweet(Favorite favorite){
 		favoriteTweetRepository.save(favorite);
@@ -58,4 +65,13 @@ public class TweetService {
 		tweetRepository.save(tweet);
 	}
 	
+	public void addRetweet(Retweet retweet){
+		retweetRepository.save(retweet);
+	}
+	public Retweet searchRetweet(String retweetId){
+		return retweetRepository.findByRetweetId(retweetId);
+	}
+	public void remove(String tweetId){
+		tweetRepository.delete(tweetId);
+	}
 }

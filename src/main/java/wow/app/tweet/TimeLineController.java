@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
+import wow.OtherLogic;
+import wow.domain.model.Block;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
 import wow.domain.model.Retweet;
@@ -58,6 +61,17 @@ public class TimeLineController {
 		}
 		Collections.sort(timeLine, new TimeLineComparator());
 
+		// timeLine の media を画像へ変換し、変換先URLを mediaUrl へセット＠南波
+		for (int i = 0; i < timeLine.size(); i++) {
+			if (timeLine.get(i).getMedia() != null) {
+				// System.out.println("ファイル保存処理" + timeLine.get(i).getDetail());
+				String saveFileName = "tweetPicture/tweetPicture_" + timeLine.get(i).getTweetId() + ".jpg";
+				OtherLogic.saveImageFromHexString(timeLine.get(i).getMedia(), saveFileName);
+				timeLine.get(i).setMediaUrl("img/usersPicture/" + saveFileName);
+				tweetService.addTweet(timeLine.get(i));
+			}
+		}
+
 		model.addAttribute("login_user", userDetails.getUser());
 		model.addAttribute("timeLine", timeLine);
 		model.addAttribute("count_follow", follow.size());
@@ -72,6 +86,9 @@ public class TimeLineController {
 		model.addAttribute("count_follower", follower.size());
 		System.out.println("フォロワー数" + follower.size());
 
+		LocalDateTime now = LocalDateTime.now();
+		model.addAttribute("now", now);
+
 		return "timeline/timeLine";
 	}
 
@@ -82,6 +99,7 @@ public class TimeLineController {
 		System.out.println("プロフィール表示：" + userId);
 		return "redirect:/profile";
 	}
+
 	@RequestMapping(value = "/profile2", method = RequestMethod.POST)
 	String profile2(@RequestParam("retweet_user_id") String userId, RedirectAttributes attributes) {
 
@@ -90,14 +108,16 @@ public class TimeLineController {
 		return "redirect:/profile";
 	}
 
-
 	@RequestMapping(value = "/favorite", method = RequestMethod.POST)
 	String favorite(@RequestParam("favorite_tweet_id") String favoriteTweetId,
 			@AuthenticationPrincipal WowUserDetails userDetails, RedirectAttributes attributes) {
 
-		/*String time = LocalDateTime.now().toString();
-		LocalDateTime now = LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
-		System.out.println(now);*/
+		/*
+		 * String time = LocalDateTime.now().toString(); LocalDateTime now =
+		 * LocalDateTime.parse(time,
+		 * DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
+		 * System.out.println(now);
+		 */
 		LocalDateTime now = LocalDateTime.now();
 		String favoriteId = userDetails.getUser().getUserId() + now;
 		Favorite favorite = new Favorite();
@@ -140,12 +160,26 @@ public class TimeLineController {
 
 		return "redirect:/timeLine";
 	}
-	@RequestMapping(value="/remove",method = RequestMethod.POST)
-	String remove(@RequestParam("remove_id") String removeId,
-			@AuthenticationPrincipal WowUserDetails userDetails){
+
+	@RequestMapping(value = "/remove", method = RequestMethod.POST)
+	String remove(@RequestParam("remove_id") String removeId, @AuthenticationPrincipal WowUserDetails userDetails) {
 		System.out.println(removeId);
 		tweetService.remove(removeId);
-		
+
+		return "redirect:/timeLine";
+	}
+
+	@RequestMapping(value = "/block", method = RequestMethod.POST)
+	String block(@RequestParam("block_user_id") String blockUserId,
+			@AuthenticationPrincipal WowUserDetails userDetails) {
+		LocalDateTime now = LocalDateTime.now();
+		String blockId = userDetails.getUser().getUserId() + now;
+		Block block = new Block();
+		block.setBlockId(blockId);
+		block.setUserId(userDetails.getUser().getUserId());
+		block.setBlockUserId(blockUserId);
+		userService.blocking(block);
+
 		return "redirect:/timeLine";
 	}
 }

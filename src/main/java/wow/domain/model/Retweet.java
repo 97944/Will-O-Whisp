@@ -29,7 +29,8 @@ public class Retweet implements Serializable{
     @Column(nullable = false)
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime time;
-    private File media;
+    private String media;
+    private String mediaUrl;
     private int relation;
     private String relationId;
     
@@ -63,12 +64,20 @@ public class Retweet implements Serializable{
     	this.time = time;
     }
     
-    public File getMedia(){
+    public String getMedia(){
     	return media;
     }
     
-    public void setMedia(File media){
+    public void setMedia(String media){
     	this.media = media;
+    }
+    
+    public String getMediaUrl(){
+    	return mediaUrl;
+    }
+    
+    public void setMediaUrl(String mediaUrl){
+    	this.mediaUrl = mediaUrl;
     }
     
     public int getRelation(){

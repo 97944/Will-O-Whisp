@@ -23,6 +23,7 @@ import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
 import wow.app.tweet.TimeLineComparator;
+import wow.domain.model.Block;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
 import wow.domain.model.Tweet;
@@ -87,16 +88,20 @@ public class ProfileController {
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
 		
 		// ログインユーザーのフォローの有無
+		System.out.println("ログインユーザーのフォローの有無" + userDetails.getUser().getUserId());
 		List<Follow> loginUserFollow = userService.loadFollowUserByUserId(userDetails.getUser().getUserId());
+		/*System.out.println(loginUserFollow.size() + ' ' + follow.size());
 		List<User> loginFollowUser = new ArrayList<User>();
 		for (int i = 0; i < follow.size(); i++) {
 			loginFollowUser.add(userService.loadUserByUserId(loginUserFollow.get(i).getFollowUserId()));
 		}
+		System.out.println("null?");*/
 		
 		// ログインユーザーorフォローユーザーorNotフォローユーザーか判断
 		System.out.println("プロフィールのユーザーID：" + userId + "　ログインユーザーのユーザーID：" + userDetails.getUser().getUserId());
 		if (userId.equals(userDetails.getUser().getUserId())) {
 			model.addAttribute("switch","ログイン");
+			System.out.println("このユーザーはログインユーザー");
 		}else{
 			List<String> followId = new ArrayList<String>();
 			System.out.println("フォローリスト");
@@ -106,23 +111,53 @@ public class ProfileController {
 			}
 			if(followId.contains(userId)){
 				model.addAttribute("switch","フォロー済み");
+				System.out.println("このユーザーはフォロー済み");
 			}else{
 				model.addAttribute("switch","未フォロー");
+				System.out.println("このユーザーは未フォロー");
 			}
 		}
-
+		
+		// ログインユーザーがブロックされているかどうか
+		Block block = userService.searchLoginUserBlocked(userDetails.getUser().getUserId(), userId);
+		boolean check;
+		if(block == null){
+			check = false;
+		}else{
+			check = true;
+		}
+		model.addAttribute("check",check);
+		
+		// ログインユーザーがブロックしているかどうか
+		Block block2 = userService.searchLoginUserBlocked(userId, userDetails.getUser().getUserId());
+		boolean check2;
+		if(block2 == null){
+			check2 = false;
+		}else{
+			check2 = true;
+		}
+		model.addAttribute("check2",check2);
+		
 		return "profile/profile";
 	}
 	
+	// プロフィールからpostした時
+	@RequestMapping(value = "profile" ,method = RequestMethod.POST)
+	String jump(@RequestParam("user_id") String userId ,RedirectAttributes attributes) {
+		System.out.println(userId);
+		attributes.addAttribute("userId",userId);
+		return "redirect:/profile";
+	}
+	
 	// フォローユーザリストからpostした時
-	@RequestMapping(params = "follow_user_id", method = RequestMethod.POST)
+	@RequestMapping(value = "follow", method = RequestMethod.POST)
 	String followJump(@RequestParam("follow_user_id") String followId, RedirectAttributes attributes) {
 		System.out.println(followId);
 		attributes.addAttribute("userId", followId);
 		return "redirect:/profile";
 	}
 	//　フォロワーリストからpostした時
-	@RequestMapping(params = "follower_user_id", method = RequestMethod.POST)
+	@RequestMapping(value = "follower", method = RequestMethod.POST)
 	String followerJump(@RequestParam("follower_user_id") String followerId, RedirectAttributes attributes) {
 		System.out.println(followerId);
 		attributes.addAttribute("userId", followerId);
@@ -178,6 +213,22 @@ public class ProfileController {
 		
 		userService.following(follow);
 		
+		return "redirect:/profile";
+	}
+	// ブロック解除
+	@RequestMapping(value = "unblock", method = RequestMethod.POST)
+	String unblock(@RequestParam("unblock_user_id") String unBlockUserId,RedirectAttributes attributes,
+			@AuthenticationPrincipal WowUserDetails userDetails){
+		Block block = userService.searchLoginUserBlocked(unBlockUserId,userDetails.getUser().getUserId());
+		
+		if(block != null){
+			System.out.println("ブロック解除");
+			userService.unblock(block.getBlockId());
+		}else{
+			System.out.println("ブロック解除できないよー");
+		}
+		
+		attributes.addAttribute("userId",unBlockUserId);
 		return "redirect:/profile";
 	}
 }

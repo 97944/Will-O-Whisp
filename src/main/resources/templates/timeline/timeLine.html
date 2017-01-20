@@ -45,26 +45,34 @@
 			<div class="col-md-6">
 				<section class="card" th:each="timeLine:${timeLine}">
 					<div th:if="${timeLine.retweetId}">
-						<div class="card-title">
-						<form action="timeLine/profile2" method="POST" name="form5">
-								<input type="hidden" name="retweet_user_id" th:value="${timeLine.userId}" />
-								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-								<a href="#" onClick="document.form5.submit();"><span th:text="${timeLine.user.userName}+'さんがリツイートしました'"></span></a>
+					<div class="card-title">
+						<form action="timeLine/profile" method="POST" th:name="${timeLine.user.userId}">
+							<div th:if="${timeLine.retweetId}">
+								<a href="javascript:;" th:onClick="'document.'+${timeLine.user.userId}+'.submit();'"><span th:text="${timeLine.user.userName}+'さんがリツイートしました'"></span></a>
+									<input type="hidden" name="timeLine_user_id" th:value="${timeLine.user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+							</div>
 						</form>
-						<form action="timeLine/profile" method="POST" name="form6">
-							<span th:text="${timeLine.retweet.user.userName}"></span>
-							<a href="#" onClick="document.form6.submit();"><span th:text="${timeLine.retweet.user.userId}"></span></a>
-							<input type="hidden" th:value="${timeLine.retweet.user.userId}" />
+						<form action="timeLine/profile" method="POST">
+							<span th:text="${timeLine.retweet.user.userName}"></span>						
+							<input type="submit" name="timeLine_user_id" th:value="${timeLine.retweet.user.userId}" />
 							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						</form>
-						</div>
-					<div class="card-content">
-						<a th:text="${timeLine.retweet.detail}">detail</a> <input type="hidden"
-							name="button_id" th:value="${timeLine.retweetId}" />
+						<script src="js/time.js" id='a' th:title="${timeLine.time}"></script>
 					</div>
+					
+					<div class="card-content">
+						<a th:text="${timeLine.retweet.detail}">detail</a><input type="hidden"
+							name="button_id" th:value="${timeLine.retweetId}" />
+						<div>
+							<div class="thumbnail">
+								<img th:src="${timeLine.mediaUrl}" />
+							</div>
+						</div>
+					</div>
+					
 					<div class="card-button" style="display: inline-flex">
 						<button type="submit" data-toggle="modal" data-target="#modal">⇒</button>
-
 						<!-- 2.モーダルの配置 -->
 						<div class="modal" id="modal" tabindex="-1">
 							<div class="modal-dialog">
@@ -113,24 +121,28 @@
 								th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						</form>
 						<form action="timeLine/block" method="POST">
-							<a><input type="submit" name="block" value="🚫" /></a> <input
-								type="hidden" name="block_user_id" th:value="${timeLine.retweet.user.userId}" />
+							<a><input type="submit" name="block" value="🚫" /></a>
+							<input type="hidden" name="block_user_id" th:value="${timeLine.retweet.user.userId}" />
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 						</form>
 					</div>
 					</div>
 					<div th:unless="${timeLine.retweetId}">
-					<form action="timeLine/profile" method="POST" name="form8">
-						<div class="card-title">
-							<span th:text="${timeLine.user.userName}"></span> <input
-								type="hidden" name="timeLine_user_id"
-								th:value="${timeLine.userId}" /> <input type="hidden"
-								th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-							<a href="#" onClick="document.form8.submit();"><span th:text="${timeLine.userId}"></span></a>
-						</div>
-					</form>
+					<div class="card-title">
+						<form action="timeLine/profile" method="POST">
+							<span th:text="${timeLine.user.userName}"></span>
+							<input type="submit" name="timeLine_user_id" th:value="${timeLine.user.userId}" />
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						</form>
+					</div>
 					<div class="card-content">
 						<a th:text="${timeLine.detail}">detail</a> <input type="hidden"
 							name="button_id" th:value="${timeLine.tweetId}" />
+						<div>
+							<div class="thumbnail">
+								<img th:src="${timeLine.mediaUrl}" />
+							</div>
+						</div>
 					</div>
 					<div class="card-button" style="display: inline-flex">
 						<button type="submit" data-toggle="modal" data-target="#modal">⇒</button>

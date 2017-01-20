@@ -10,11 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
+import wow.OtherLogic;
 import wow.domain.model.Tweet;
 
 @Controller
@@ -49,16 +51,20 @@ public class HeaderController {
 
 	// ツイート
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	String addTweet(@RequestParam("tweet") String detail,@AuthenticationPrincipal WowUserDetails userDetails) {
+	String addTweet(@RequestParam("tweet") String detail,@AuthenticationPrincipal WowUserDetails userDetails,
+			@RequestParam("upImg") MultipartFile upImg) {
 
 		LocalDateTime now = LocalDateTime.now();
 		String userId = userDetails.getUser().getUserId();
-		String tweetId = userId + now;
+		String tweetId = userId + OtherLogic.nowDateTimeID();
 		Tweet tweet = new Tweet();
 		tweet.setTweetId(tweetId);
 		tweet.setUserId(userId);
 		tweet.setDetail(detail);
 		tweet.setTime(now);
+		// 画像無しツイートした時は IOException になる。しかし動く＠南波
+		  tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+		
 		tweetService.addTweet(tweet);
 		
 		return "redirect:/timeLine";

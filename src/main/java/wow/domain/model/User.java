@@ -17,8 +17,10 @@ public class User implements Serializable{
     private String userName;
     private String password;
     private String profile;
-    private File topPicture;
-    private File headPicture;
+    private String topPicture;
+    private String headPicture;
+    private String topPictureUrl;
+    private String headPictureUrl;
     private int lock;
     
     @Enumerated(EnumType.STRING)
@@ -56,19 +58,19 @@ public class User implements Serializable{
     	this.profile = profile;
     }
     
-    public File getTopPicture(){
+    public String getTopPicture(){
     	return topPicture;
     }
     
-    public void setTopPicture(File topPicture){
+    public void setTopPicture(String topPicture){
     	this.topPicture = topPicture;
     }
     
-    public File getHeadPicture(){
+    public String getHeadPicture(){
     	return headPicture;
     }
     
-    public void setHeadPicture(File headPicture){
+    public void setHeadPicture(String headPicture){
     	this.headPicture = headPicture;
     }
     
@@ -86,5 +88,21 @@ public class User implements Serializable{
     
     public void setRoleName(RoleName roleName){
     	this.roleName = roleName;
+    }
+    
+    public String getTopPictureUrl(){
+    	return topPictureUrl;
+    }
+    
+    public void setTopPictureUrl(String topPictureUrl){
+    	this.topPictureUrl = topPictureUrl;
+    }
+    
+    public String getHeadPictureUrl(){
+    	return headPictureUrl;
+    }
+    
+    public void setHeadPictureUrl(String headPictureUrl){
+    	this.headPictureUrl = headPictureUrl;
     }
 }

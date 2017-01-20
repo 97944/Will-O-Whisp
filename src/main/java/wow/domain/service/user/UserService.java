@@ -27,6 +27,7 @@ public class UserService {
     	User user = userRepository.findByUserId(userId);
     	return user;
     }
+
     public List<Follow> loadFollowUserByUserId(String userId){
     	List<Follow> follow = followRepository.findByUserId(userId);
     	return follow;
@@ -37,6 +38,10 @@ public class UserService {
     }
     public List<Block> loadBlockUserByUserId(String userId){
     	List<Block> block = blockRepository.findByUserId(userId);
+    	return block;
+    }
+    public Block searchLoginUserBlocked(String blockUserId,String userId){
+    	Block block = blockRepository.findByBlockUserIdAndUserId(blockUserId, userId);
     	return block;
     }
     public void deleteFollowByFollowId(String followId){
@@ -50,6 +55,12 @@ public class UserService {
     }
     public void update(User user){
     	userRepository.save(user);
+    }
+    public void blocking(Block block){
+    	blockRepository.save(block);
+    }
+    public void unblock(String blockId){
+    	blockRepository.delete(blockId);
     }
     public List<User> searchByUserId(String text){
     	List<User> user = userRepository.findByUserIdContaining(text);

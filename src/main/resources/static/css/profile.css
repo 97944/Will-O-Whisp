@@ -13,12 +13,12 @@ p.tabs {
 
 p.tabs a {
 	display: block;
-	width: 19%;
+	width: 20%;
 	float: left;
-	margin: 0px 1px 0px 0px;
+	margin: 0px 0px 0px 0px;
 	padding: 3px;
 	text-align: center;
-	border-radius: 12px 12px 0px 0px; /* 角を丸くする */
+	border-radius: 0px 0px 0px 0px; /* 角を丸くする */
 }
 
 p.tabs a.tab1 {

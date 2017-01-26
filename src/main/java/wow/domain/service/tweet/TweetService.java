@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wow.domain.model.Favorite;
+import wow.domain.model.Reply;
 import wow.domain.model.Retweet;
 import wow.domain.model.Tweet;
 import wow.domain.repository.tweet.FavoriteTweetRepository;
+import wow.domain.repository.tweet.ReplyRepository;
 import wow.domain.repository.tweet.RetweetRepository;
 import wow.domain.repository.tweet.TweetRepository;
 
@@ -27,6 +29,9 @@ public class TweetService {
 	@Autowired
 	RetweetRepository retweetRepository;
 	
+	@Autowired
+	ReplyRepository replyRepository;
+	
 	public List<Tweet> findTimeLine(String userId){
 		return tweetRepository.findByUserIdContainsOrderByTimeDesc(userId);
 	}
@@ -46,6 +51,9 @@ public class TweetService {
 	
 	public List<Tweet> searchTweet(String text){
 		return tweetRepository.findByDetailContainsOrderByTimeDesc(text);
+	}
+	public List<Tweet> searchMedia(String mediaUrl){
+		return tweetRepository.findByMediaUrlContainsOrderByTimeDesc(mediaUrl);
 	}
 	public Tweet searchTweetByTweetId(String tweetId){
 		return tweetRepository.findByTweetId(tweetId);
@@ -70,6 +78,12 @@ public class TweetService {
 	}
 	public Retweet searchRetweet(String retweetId){
 		return retweetRepository.findByRetweetId(retweetId);
+	}
+	public void addReply(Reply reply){
+		replyRepository.save(reply);
+	}
+	public Reply searchReply(String replyId){
+		return replyRepository.findByReplyId(replyId);
 	}
 	public void remove(String tweetId){
 		tweetRepository.delete(tweetId);

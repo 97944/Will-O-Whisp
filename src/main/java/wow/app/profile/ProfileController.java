@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
+import wow.OtherLogic;
 import wow.app.tweet.TimeLineComparator;
 import wow.domain.model.Block;
 import wow.domain.model.Favorite;
@@ -51,7 +52,24 @@ public class ProfileController {
 		// ユーザー情報をDBから取ってきて、モデルにセット
 		User user = userService.loadUserByUserId(userId);
 		model.addAttribute("user", user);
-
+		
+		// ユーザのトップ画像、ヘッダ画像を取得
+		// topPicture を画像へ変換し、変換先URLを topPictureUrl へセット＠南波
+		if (user.getTopPicture() != null) {
+			// System.out.println("ファイル保存処理" + timeLine.get(i).getDetail());
+			String saveFileNameTop = "topPicture/topPicture_" + user.getUserId() + ".jpg";
+			OtherLogic.saveImageFromHexString(user.getTopPicture(), saveFileNameTop);
+			user.setTopPictureUrl("img/usersPicture/" + saveFileNameTop);
+			userService.update(user);
+		}
+		// headPicture を画像へ変換し、変換先URLを headPictureUrl へセット＠南波
+		if (user.getHeadPicture() != null) {
+			String saveFileNameHead = "headPicture/headPicture_" + user.getUserId() + ".jpg";
+			OtherLogic.saveImageFromHexString(user.getHeadPicture(), saveFileNameHead);
+			user.setHeadPictureUrl("img/usersPicture/" + saveFileNameHead);
+			userService.update(user);
+		}
+		
 		// ユーザーのツイートをDBから取ってきて、モデルにセット
 		List<Tweet> tweet = tweetService.findTimeLine(userId);
 		model.addAttribute("tweet", tweet);
@@ -86,6 +104,10 @@ public class ProfileController {
 		System.out.println("お気に入り数" + favorite.size());
 
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
+		List<Tweet> media = tweetService.searchMedia(userId);
+		model.addAttribute("media",media);
+		model.addAttribute("count_media",media.size());
+		System.out.println("画像付きツイート数" +  media.size());
 		
 		// ログインユーザーのフォローの有無
 		System.out.println("ログインユーザーのフォローの有無" + userDetails.getUser().getUserId());

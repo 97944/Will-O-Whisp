@@ -1,220 +1,329 @@
-
-/* 表示領域全体 */
+@CHARSET "UTF-8";
+/ 陦ｨ遉ｺ鬆伜沺蜈ｨ菴  /
 div.tabbox {
-	margin: 0px;
-	padding: 0px;
+ margin: 0px;
+ padding: 0px;
 }
 
-/* タブ部分 */
+/ 繧ｿ繝夜Κ蛻  /
 p.tabs {
-	margin: 0px;
-	padding: 0px;
+ margin: 0px;
+ padding: 0px;
 }
 
 p.tabs a {
-	display: block;
-	width: 19%;
-	float: left;
-	margin: 0px 1px 0px 0px;
-	padding: 3px;
-	text-align: center;
-	border-radius: 12px 12px 0px 0px; /* 角を丸くする */
+ display: block;
+ width: 19%;
+ float: left;
+ margin: 0px 1px 0px 0px;
+ padding: 3px;
+ text-align: center;
+ border-radius: 12px 12px 0px 0px; / 隗偵ｒ荳ｸ縺上☆繧  /
 }
 
 p.tabs a.tab1 {
-	background-color: blue;
-	color: white;
+ background-color: blue;
+ color: white;
 }
 
 p.tabs a.tab2 {
-	background-color: #aaaa00;
-	color: white;
+ background-color: #aaaa00;
+ color: white;
 }
 
 p.tabs a.tab3 {
-	background-color: red;
-	color: white;
+ background-color: red;
+ color: white;
 }
 
 p.tabs a.tab4 {
-	background-color: green;
-	color: white;
+ background-color: green;
+ color: white;
 }
 
 p.tabs a.tab5 {
-	background-color: #ff00ff;
-	color: white;
+ background-color: #ff00ff;
+ color: white;
 }
 
 p.tabs a:hover {
-	color: yellow;
+ color: yellow;
 }
 
-/* タブ中身のボックス */
+/ 繧ｿ繝紋ｸｭ霄ｫ縺ｮ繝懊ャ繧ｯ繧ｹ /
 div.tab {
-	overflow: auto;
-	clear: left;
+ overflow: auto;
+ clear: left;
 }
 
 div#tab1 {
-	border: 2px solid blue;
-	background-color: #ccffff;
+ border: 2px solid blue;
+ background-color: #ccffff;
 }
 
 div#tab2 {
-	border: 2px solid #aaaa00;
-	background-color: #ffffcc;
+ border: 2px solid #aaaa00;
+ background-color: #ffffcc;
 }
 
 div#tab3 {
-	border: 2px solid red;
-	background-color: #ffcccc;
+ border: 2px solid red;
+ background-color: #ffcccc;
 }
 
 div#tab4 {
-	border: 2px solid green;
-	background-color: #00ff9a;
+ border: 2px solid green;
+ background-color: #00ff9a;
 }
 
 div#tab5 {
-	border: 2px solid #ff00ff;
-	background-color: #ffaaff;
+ border: 2px solid #ff00ff;
+ background-color: #ffaaff;
 }
 
 div.tab p {
-	margin: 0.5em;
+ margin: 0.5em;
 }
 
 .card {
-	width: 98%;
-	background: #fff;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
-	margin: 5px;
+ width: 98%;
+ background: #fff;
+ border-radius: 5px;
+ box-shadow: 0 2px 5px #ccc;
+ margin: 5px;
 }
 
 .card-img {
-	border-radius: 5px 5px 0 0;
-	max-width: 100%;
-	height: auto;
+ border-radius: 5px 5px 0 0;
+ max-width: 100%;
+ height: auto;
 }
 
 .card-content {
-	padding: 20px;
+ padding: 20px;
 }
 
 .card-title {
-	font-size: 20px;
-	margin-bottom: 20px;
-	text-align: center;
-	color: #333;
+ font-size: 20px;
+ margin-bottom: 20px;
+ text-align: center;
+ color: #333;
 }
 
 .card-text {
-	color: #777;
-	font-size: 14px;
-	line-height: 1.5;
+ color: #777;
+ font-size: 14px;
+ line-height: 1.5;
 }
 
 .card-link {
-	text-align: center;
-	border-top: 1px solid #eee;
-	padding: 20px;
+ text-align: center;
+ border-top: 1px solid #eee;
+ padding: 20px;
 }
 
 .card-link a {
-	text-decoration: none;
-	color: #0bd;
-	margin: 0 10px;
+ text-decoration: none;
+ color: #0bd;
+ margin: 0 10px;
 }
 
 .card-link a:hover {
-	color: #0090aa;
+ color: #0090aa;
 }
 
 .profile_card {
-	word-wrap: break-word;
-	background: #fff;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
-	float: left;
-	overflow: hidden;
-	width: 28%;
-	height: 28%;
-	margin: 10px;
-	padding: 10px;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
+ word-wrap: break-word;
+ background: #fff;
+ border-radius: 5px;
+ box-shadow: 0 2px 5px #ccc;
+ float: left;
+ overflow: hidden;
+ width: 250px;
+ height: 250px;
+ margin: 10px;
+ padding: 10px;
+ border-radius: 5px;
+ box-shadow: 0 2px 5px #ccc;
 }
 
 .profile_card-name {
-	font-size: 20px;
-	margin-bottom: 20px;
-	text-align: center;
-	color: #333;
+ font-size: 20px;
+ margin-bottom: 20px;
+ text-align: center;
+ color: #333;
 }
 
 .profile_card-id {
-	font-size: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-	color: #333;
+ font-size: 10px;
+ margin-bottom: 10px;
+ text-align: center;
+ color: #333;
 }
 
 .profile_card-profile {
-	font-size: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-	color: #333;
+ font-size: 10px;
+ margin-bottom: 10px;
+ text-align: center;
+ color: #333;
 }
 
 .user_card {
-	word-wrap: break-word;
-	background: #fff;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
-	float: center;
-	overflow: hidden;
-	width: 80%;
-	height: 80%;
-	margin: 10px;
-	padding: 10px;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
+ word-wrap: break-word;
+ background: #fff;
+ border-radius: 5px;
+ box-shadow: 0 2px 5px #ccc;
+ float: center;
+ overflow: hidden;
+ width: 80%;
+ height: 80%;
+ margin: 10px;
+ padding: 10px;
+ border-radius: 5px;
+ box-shadow: 0 2px 5px #ccc;
 }
 
 .user_card-name {
-	font-size: 20px;
-	margin-bottom: 20px;
-	text-align: center;
-	color: #333;
+ font-size: 20px;
+ margin-bottom: 20px;
+ text-align: center;
+ color: #333;
 }
 
 .user_card-id {
-	font-size: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-	color: #333;
+ font-size: 10px;
+ margin-bottom: 10px;
+ text-align: center;
+ color: #333;
 }
 
 .user_card-profile {
-	font-size: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-	color: #333;
+ font-size: 10px;
+ margin-bottom: 10px;
+ text-align: center;
+ color: #333;
 }
 
 .footer {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	/* Set the fixed height of the footer here */
-	height: 60px;
-	background-color: #f5f5f5;
+ position: absolute;
+ bottom: 0;
+ width: 100%;
+ / Set the fixed height of the footer here /
+ height: 60px;
+ background-color: #f5f5f5;
 }
 .search_text {
-	background-color: #CCFFFF;
-	width 100%;
-	text-align: center;
-	font-size: 40px;
+ background-color: #CCFFFF;
+ width 100%;
+ text-align: center;
+ font-size: 40px;
+}
+
+
+#タイムラインのプロフィールカード
+.twPc-div {
+ background: #fff none repeat scroll 0 0;
+ border: 1px solid #e1e8ed;
+ border-radius: 6px;
+ height: 200px;
+ max-width: 340px;
+}
+
+.twPc-bg {
+ background-position: 0 50%;
+ background-size: 100% auto;
+ border-bottom: 1px solid #c0c0c0;
+ border-radius: 4px 4px 0 0;
+ height: 100px;
+ width: 100%;
+}
+
+.twPc-block {
+ display: block !important;
+}
+
+.twPc-button {
+ margin: -35px -10px 0;
+ text-align: right;
+ width: 100%;
+}
+
+.twPc-avatarLink {
+ background-color: #fff;
+ border-radius: 6px;
+ display: inline-block !important;
+ float: left;
+ margin: -30px 5px 0 8px;
+ max-width: 100%;
+ padding: 1px;
+ vertical-align: bottom;
+}
+
+.twPc-avatarImg {
+ border: 2px solid #fff;
+ border-radius: 7px;
+ box-sizing: border-box;
+ color: #fff;
+ height: 72px;
+ width: 72px;
+}
+
+.twPc-divUser {
+ margin: 10px 0 0;
+}
+
+.twPc-divName {
+ font-size: 18px;
+ font-weight: 700;
+ line-height: 21px;
+}
+
+.twPc-divName a {
+ color: inherit !important;
+}
+
+.twPc-divStats {
+ margin-left: 11px;
+ padding: 10px 0;
+}
+
+.twPc-Arrange {
+ box-sizing: border-box;
+ display: table;
+ margin: 0;
+ min-width: 100%;
+ padding: 0;
+ table-layout: auto;
+}
+
+ul.twPc-Arrange {
+ list-style: outside none none;
+ margin: 0;
+ padding: 0;
+}
+
+.twPc-ArrangeSizeFit {
+ display: table-cell;
+ padding: 0;
+ vertical-align: top;
+}
+
+.twPc-ArrangeSizeFit a:hover {
+ text-decoration: none;
+}
+
+.twPc-StatValue {
+ display: block;
+ font-size: 18px;
+ font-weight: 500;
+ transition: color 0.15s ease-in-out 0s;
+}
+
+.twPc-StatLabel {
+ color: #8899a6;
+ font-size: 10px;
+ letter-spacing: 0.02em;
+ overflow: hidden;
+ text-transform: uppercase;
+ transition: color 0.15s ease-in-out 0s;
 }

@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
@@ -29,6 +30,7 @@ import wow.OtherLogic;
 import wow.domain.model.Block;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
+import wow.domain.model.Reply;
 import wow.domain.model.Retweet;
 import wow.domain.model.Tweet;
 import wow.domain.model.User;
@@ -59,6 +61,10 @@ public class TimeLineController {
 				timeLine.add(dummyList.get(j));
 			}
 		}
+		List<Tweet> loginList = tweetService.findTimeLine(userId);
+		for(int i = 0;i < loginList.size();i++){
+			timeLine.add(loginList.get(i));
+		}
 		Collections.sort(timeLine, new TimeLineComparator());
 
 		// timeLine の media を画像へ変換し、変換先URLを mediaUrl へセット＠南波
@@ -71,7 +77,7 @@ public class TimeLineController {
 				tweetService.addTweet(timeLine.get(i));
 			}
 		}
-
+		
 		model.addAttribute("login_user", userDetails.getUser());
 		model.addAttribute("timeLine", timeLine);
 		model.addAttribute("count_follow", follow.size());
@@ -130,7 +136,42 @@ public class TimeLineController {
 
 		return "redirect:/profile";
 	}
+	
+	@RequestMapping(value = "/reply", method = RequestMethod.POST)
+	String reply(@RequestParam("tweet") String detail,@RequestParam("reply_id") String replyId,
+			@AuthenticationPrincipal WowUserDetails userDetails,MultipartFile upImg){
+		LocalDateTime now = LocalDateTime.now();
+		String userId = userDetails.getUser().getUserId();
+		String tweetId = userId + OtherLogic.nowDateTimeID();
+		Tweet tweet = new Tweet();
+		tweet.setTweetId(tweetId);
+		tweet.setUserId(userId);
+		tweet.setDetail(detail);
+		tweet.setTime(now);
+		tweet.setRelation(1);
+		tweet.setReplyId(replyId);
+		// 画像無しツイートした時は IOException になる。しかし動く＠南波
+		if(upImg != null){
+			tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+		}
+		
+		if (tweetService.searchReply(replyId) == null) {
+			Reply reply = new Reply();
+			reply.setReplyId(replyId);
+			Tweet re = tweetService.searchTweetByTweetId(replyId);
+			reply.setUserId(re.getUserId());
+			reply.setDetail(re.getDetail());
+			reply.setTime(re.getTime());
+			reply.setRelation(re.getRelation());
+			reply.setMediaUrl(re.getMediaUrl());
 
+			tweetService.addReply(reply);
+		}
+		
+		tweetService.addTweet(tweet);
+		
+		return "redirect:/timeLine";
+	}
 	@RequestMapping(value = "/retweet", method = RequestMethod.POST)
 	String retweet(@RequestParam("retweet_id") String retweetId, @AuthenticationPrincipal WowUserDetails userDetails) {
 		/*
@@ -138,22 +179,26 @@ public class TimeLineController {
 		 * LocalDateTime.parse(time,DateTimeFormatter.
 		 * ofPattern("yyyy/MM/dd hh:mm:ss"));
 		 */
-		LocalDateTime now = LocalDateTime.now();
-		Tweet tweet = new Tweet();
-		String tweetId = userDetails.getUser().getUserId() + now;
-		tweet.setTweetId(tweetId);
-		tweet.setUserId(userDetails.getUser().getUserId());
-		tweet.setTime(now);
-		tweet.setRetweetId(retweetId);
-
-		tweetService.addTweet(tweet);
+		System.out.println(retweetId);
 		if (tweetService.searchRetweet(retweetId) == null) {
+			LocalDateTime now = LocalDateTime.now();
+			Tweet tweet = new Tweet();
+			String tweetId = userDetails.getUser().getUserId() + now;
+			tweet.setTweetId(tweetId);
+			tweet.setUserId(userDetails.getUser().getUserId());
+			tweet.setTime(now);
+			tweet.setRetweetId(retweetId);
+	
+			tweetService.addTweet(tweet);
+		
 			Retweet retweet = new Retweet();
 			retweet.setRetweetId(retweetId);
 			Tweet re = tweetService.searchTweetByTweetId(retweetId);
+			
 			retweet.setUserId(re.getUserId());
 			retweet.setDetail(re.getDetail());
 			retweet.setTime(re.getTime());
+			retweet.setMediaUrl(re.getMediaUrl());
 
 			tweetService.addRetweet(retweet);
 		}

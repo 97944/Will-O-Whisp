@@ -63,7 +63,9 @@ public class HeaderController {
 		tweet.setDetail(detail);
 		tweet.setTime(now);
 		// 画像無しツイートした時は IOException になる。しかし動く＠南波
-		  tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+		if(upImg!=null){
+			tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+		}
 		
 		tweetService.addTweet(tweet);
 		

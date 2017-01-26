@@ -18,189 +18,394 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-3">
-				<section class="profile_card" th:each="login_user:${login_user}">
-					<form action="timeLine/profile" method="POST" name="form7">
-						<div class="profile_card-name">
-							<a th:text="${login_user.userName}"></a>
+				<!-- タイムラインのプロフィールカード (start)-->
+				
+				<div class="profileBox">
+					<div class="twPc-div">
+						<!-- ユーザヘッダ画像 -->
+						<form action="timeLine/profile" method="POST" name="headprofile">		
+						<a class="twPc-bg twPc-block" th:style="'background-image: url('+${login_user.headPictureUrl}+');'" href="javascript:;" onClick="document.headprofile.submit();"></a>
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						<input type="hidden" name="timeLine_user_id" th:value="${login_user.userId}" />
+						</form>
+						<div>
+							<div class="profileBlank"></div>
+							<div class="twPc-button">
+								<!-- フォローボタン -->
+								<button class="twitter-follow-button" data-show-count="false"
+									data-size="large" data-show-screen-name="false" data-dnt="true">フォローする
+								</button>
+							</div>
+							<!-- ユーザアイコン画像 -->
+							<form action="timeLine/profile" method="POST" name="topprofile">	
+							<a th:title="${login_user.userName}" href="javascript:;" onClick="document.topprofile.submit();"
+								class="twPc-avatarLink"> <img alt="topPicture"
+								th:src="${login_user.topPictureUrl}" class="twPc-avatarImg" />
+								<input type="hidden" th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}" />
+								<input type="hidden"
+									name="timeLine_user_id" th:value="${login_user.userId}" />
+							</a>
+							</form>
+							<!-- ユーザ名、ユーザID -->
+							<div class="twPc-divUser">
+								<form action="timeLine/profile" method="POST" name="onprofile">	
+								<div class="twPc-divName">
+									<a href="javascript:;" onClick="document.onprofile.submit();" th:text="${login_user.userName}"></a>
+								</div>
+								
+								<input type="hidden" th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}" /> <input type="hidden"
+									name="timeLine_user_id" th:value="${login_user.userId}" /> <a
+									href="javascript:;" onClick="document.onprofile.submit();"><span
+									th:text="'@'+${login_user.userId}"></span></a>
+								</form>		
+							</div>
+
+							<div class="twPc-divStats">
+								<ul class="twPc-Arrange">
+									<!-- ツイート数 -->
+									<li class="twPc-ArrangeSizeFit"><a href=""
+										title="TweetNum"> <span class="twPc-StatLabel twPc-block">ツイート</span>
+											<span class="twPc-StatValue" th:text="${count_tweet}"></span>
+									</a></li>
+									<!-- フォロー数 -->
+									<li class="twPc-ArrangeSizeFit"><a href=""
+										title="FollowingNum"> <span
+											class="twPc-StatLabel twPc-block">フォロー</span> <span
+											class="twPc-StatValue" th:text="${count_follow}"></span>
+									</a></li>
+									<!-- フォロワー数 -->
+									<li class="twPc-ArrangeSizeFit"><a href=""
+										title="FollowersNum"> <span
+											class="twPc-StatLabel twPc-block">フォロワー</span> <span
+											class="twPc-StatValue" th:text="${count_follower}"></span>
+									</a></li>
+								</ul>
+							</div>
 						</div>
-						<div class="profile_card-id">
-							<input type="hidden" th:name="${_csrf.parameterName}"
-								th:value="${_csrf.token}" /> <input type="hidden"
-								name="timeLine_user_id" th:value="${login_user.userId}" />
-							<a href="#" onClick="document.form7.submit();"><span th:text="${login_user.userId}"></span></a>
-						</div>
-						<div class="profile_card-profile">
-							<a th:text="${login_user.profile}"></a>
-						</div>
-						<table class="profile_card-count" width="200">
-							<tr>
-								<td>ツイート<br></br> <span th:text="${count_tweet}"></span></td>
-								<td>フォロー<br></br> <span th:text="${count_follow}"></span></td>
-								<td>フォロワー<br></br> <span th:text="${count_follower}"></span></td>
-							</tr>
-						</table>
-					</form>
-				</section>
+					</div>
+				</div>
+				
+				
+				<!-- タイムラインのプロフィールカード (end)-->
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-8">
 				<section class="card" th:each="timeLine:${timeLine}">
 					<div th:if="${timeLine.retweetId}">
-					<div class="card-title">
-						<form action="timeLine/profile" method="POST" th:name="${timeLine.user.userId}">
-							<div th:if="${timeLine.retweetId}">
-								<a href="javascript:;" th:onClick="'document.'+${timeLine.user.userId}+'.submit();'"><span th:text="${timeLine.user.userName}+'さんがリツイートしました'"></span></a>
-									<input type="hidden" name="timeLine_user_id" th:value="${timeLine.user.userId}" />
+						<div class="row">
+							<div class="card-header">
+								<div class="col-md-1"></div>
+								<div class="col-md-1">
+									<img src="img/retweet.png" alt="サンプル" width="20" height="20"/>
+								</div>
+								<div class="col-md-10">
+									<div th:switch="${timeLine.user.userId}">
+										<span th:case="${login_user.userId}" th:text="あなたがリツイート"></span>
+										<span th:case="*" th:text="${timeLine.user.userName}+'さんがリツイートしました'"></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<!-- ユーザアイコン -->
+									<div class="thumbnail">
+									<img th:src="${timeLine.retweet.user.topPictureUrl}"/>
+								</div>
+								
+							</div>
+							<div class="col-md-9">
+							<form action="timeLine/profile" method="POST">
+								
+								
+								<div class="card-title">
+									<span th:text="${timeLine.retweet.user.userName}"></span>
+									<input type="submit" name="timeLine_user_id" th:value="${timeLine.retweet.user.userId}" />
 									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-							</div>
-						</form>
-						<form action="timeLine/profile" method="POST">
-							<span th:text="${timeLine.retweet.user.userName}"></span>						
-							<input type="submit" name="timeLine_user_id" th:value="${timeLine.retweet.user.userId}" />
-							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						</form>
-						<script src="js/time.js" id='a' th:title="${timeLine.time}"></script>
-					</div>
-					
-					<div class="card-content">
-						<a th:text="${timeLine.retweet.detail}">detail</a><input type="hidden"
-							name="button_id" th:value="${timeLine.retweetId}" />
-						<div>
-							<div class="thumbnail">
-								<img th:src="${timeLine.mediaUrl}" />
-							</div>
-						</div>
-					</div>
-					
-					<div class="card-button" style="display: inline-flex">
-						<button type="submit" data-toggle="modal" data-target="#modal">⇒</button>
-						<!-- 2.モーダルの配置 -->
-						<div class="modal" id="modal" tabindex="-1">
-							<div class="modal-dialog">
-								<!-- 3.モーダルのコンテンツ -->
-								<div class="modal-content">
-									<!-- 4.モーダルのヘッダ -->
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal">
-											<span aria-hidden="true">&times;</span>
-										</button>
-										<h4 class="modal-title" id="modal-label">
-											<!-- <label for="recipient-name" class="control-label" id="recipient-name"></label>-->
-											<span th:text="'@'+${timeLine.retweet.user.userId}+'さんへの返信'"></span>
-										</h4>
-									</div>
-									<!-- 5.モーダルのボディ -->
-									<div class="modal-body">
-										<textarea rows="3" class="form-control" id="recipient-name"
-											name="tweet" th:text="'@'+${timeLine.retweet.user.userId}"></textarea>
-									</div>
-									<!-- 6.モーダルのフッタ -->
-									<div class="modal-footer">
-										<button type="submit" class="btn btn-primary">ツイート</button>
-										<input type="hidden" th:name="${_csrf.parameterName}"
-											th:value="${_csrf.token}" />
+								</div>
+								
+							</form>
+							<div class="card-content">
+								<div th:text="${timeLine.retweet.detail}">detail</div>
+								<input type="hidden" name="button_id" th:value="${timeLine.retweetId}" />
+								<!-- ツイート画像 -->
+								<div>
+									<div class="thumbnail" th:if="${timeLine.retweet.mediaUrl}">
+										<img th:src="${timeLine.retweet.mediaUrl}" />
 									</div>
 								</div>
 							</div>
 						</div>
-						<div th:switch="${timeLine.userId}">
-							<form action="timeLine/remove" method="POST">
-								<a><input type="submit" name="remove" value="×" th:case="${login_user.userId}"/></a>
-								<input type="hidden" name="remove_id" th:value="${timeLine.tweetId}" />
-								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-							</form>
-							<form action="timeLine/retweet" method="POST">
-								<a><input type="submit" name="retweet" value="⇔" th:case="*"/></a>
-								<input type="hidden" name="retweet_id" th:value="${timeLine.retweetId}" />
-								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-							</form>
 						</div>
-						<form action="timeLine/favorite" method="POST">
-							<a><input type="submit" name="favorite" value="☆" /></a> <input
-								type="hidden" name="favorite_tweet_id"
-								th:value="${timeLine.retweetId}" /> <input type="hidden"
-								th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						</form>
-						<form action="timeLine/block" method="POST">
-							<a><input type="submit" name="block" value="🚫" /></a>
-							<input type="hidden" name="block_user_id" th:value="${timeLine.retweet.user.userId}" />
-							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						</form>
-					</div>
-					</div>
-					<div th:unless="${timeLine.retweetId}">
-					<div class="card-title">
-						<form action="timeLine/profile" method="POST">
-							<span th:text="${timeLine.user.userName}"></span>
-							<input type="submit" name="timeLine_user_id" th:value="${timeLine.user.userId}" />
-							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						</form>
-					</div>
-					<div class="card-content">
-						<a th:text="${timeLine.detail}">detail</a> <input type="hidden"
-							name="button_id" th:value="${timeLine.tweetId}" />
-						<div>
-							<div class="thumbnail">
-								<img th:src="${timeLine.mediaUrl}" />
-							</div>
-						</div>
-					</div>
-					<div class="card-button" style="display: inline-flex">
-						<button type="submit" data-toggle="modal" data-target="#modal">⇒</button>
+						<div class="row">
+						<div class="col-md-2"></div>
+						<div class="col-md-9">
+							<div class="col-md-3">
+							<div class="card-button" style="display: inline-flex"></div>
+								<a href="javascript:;" data-toggle="modal" th:attr="data-target='#modal'+${timeLine.retweet.user.userId}" ><img src="img/reply.png" width="30" height="30"/></a>
+								<!-- 2.モーダルの配置 -->
+								<form action="timeLine/reply" method="POST" enctype="multipart/form-data">
+								<div class="modal" th:id="'modal'+${timeLine.retweet.user.userId}" tabindex="-1">
+									<div class="modal-dialog">
+										<!-- 3.モーダルのコンテンツ -->
+										<div class="modal-content">
+											<!-- 4.モーダルのヘッダ -->
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="modal-label">
+													<!-- <label for="recipient-name" class="control-label" id="recipient-name"></label>-->
+													<span th:text="'@'+${timeLine.retweet.user.userId}+'さんへの返信'"></span>
+												</h4>
+											</div>
+											<!-- 5.モーダルのボディ -->
+											<div class="modal-body">
+												<textarea rows="3" class="form-control" id="reply_text"
+													name="tweet"></textarea>
+											</div>
+											<span class="count_num">140</span>
+										
+										<script type="text/javascript">
+											$(function() {
 
-						<!-- 2.モーダルの配置 -->
-						<div class="modal" id="modal" tabindex="-1">
-							<div class="modal-dialog">
-								<!-- 3.モーダルのコンテンツ -->
-								<div class="modal-content">
-									<!-- 4.モーダルのヘッダ -->
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal">
-											<span aria-hidden="true">&times;</span>
-										</button>
-										<h4 class="modal-title" id="modal-label">
-											<!-- <label for="recipient-name" class="control-label" id="recipient-name"></label>-->
-											<span th:text="'@'+${timeLine.userId}+'さんへの返信'"></span>
-										</h4>
+												// 初期状態での文字数取得・表示
+												var max = 140;
+												var min = 0;
+												var txt = $('textarea#reply_text').val(), new_txt = $.trim(txt.replace(/\n/g, "")), 
+												couter = max - new_txt.length;
+												
+												$('.count_num').html(couter);
+												if (couter == 140) {
+													$('#reply_btn').attr('disabled', 'disabled');
+												}
+												$('#replyFile').on("change", function() {
+										            var file = this.files[0];
+										            if(file != null) {
+										                $('#reply_btn').removeAttr('disabled');
+										            }else{
+										            	$('#reply_btn').attr('disabled','disabled');
+										            }
+										        });
+												
+
+												// 入力時の文字数取得・表示、アラート表示
+												$('textarea#reply_text').bind('keydown keyup keypress change',function() {
+													var txt = $(this).val(), new_txt = $.trim(txt.replace(/\n/g,"")), 
+													couter = max - new_txt.length;
+													$('.count_num').html(couter);
+													if (min > couter) {
+														$('#reply_btn').attr('disabled', 'disabled');
+														$('.count_num').css("color","red");
+													} else  if(couter == max){
+														$('#reply_btn').attr('disabled', 'disabled');
+													} else{
+														$('#reply_btn').removeAttr('disabled');
+														$('.count_num').css("color","");
+													}
+												});												
+											});
+										</script>
+											<!-- 6.モーダルのフッタ -->
+											<div class="modal-footer">
+												<input type="file" class="btn btn-default" name="upImg" id="replyFile"/>
+												<input type="hidden" name="reply_id" th:value="${timeLine.retweetId}" />
+												<button type="submit" class="btn btn-primary" id="reply_btn">ツイート</button>
+												<input type="hidden" th:name="${_csrf.parameterName}"
+													th:value="${_csrf.token}" />
+											</div>
+										</div>
 									</div>
-									<!-- 5.モーダルのボディ -->
-									<div class="modal-body">
-										<textarea rows="3" class="form-control" id="recipient-name"
-											name="tweet" th:text="'@'+${timeLine.userId}"></textarea>
+								</div>
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/retweet" method="POST" th:name="'retweet'+${timeLine.retweetId}">
+									<div th:switch="${timeLine.user.userId}">
+										<a th:case="${login_user.userId}" href="javascript:void(0);" th:onClick="'document.retweet'+${timeLine.retweetId}+'.submit();'" ><img src="img/retweet.png" width="30" height="30"/></a>
+										<a th:case="*" href="javascript:;" th:onClick="'document.retweet'+${timeLine.retweetId}+'.submit();'" ><img src="img/retweet.png" width="30" height="30"/></a>
 									</div>
-									<!-- 6.モーダルのフッタ -->
-									<div class="modal-footer">
-										<button type="submit" class="btn btn-primary">ツイート</button>
-										<input type="hidden" th:name="${_csrf.parameterName}"
-											th:value="${_csrf.token}" />
+									<input type="hidden" name="retweet_id"
+										th:value="${timeLine.retweetId}" /> <input type="hidden"
+										th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/favorite" method="POST" th:name="'favorite'+${timeLine.retweetId}">
+									<a href="javascript:;" th:onClick="'document.favorite'+${timeLine.retweetId}+'.submit();'" ><img src="img/favorite.png" width="30" height="30"/></a>  
+									<input type="hidden" name="favorite_tweet_id" th:value="${timeLine.retweetId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/block" method="POST" th:name="'block'+${timeLine.retweet.user.userId}">
+									<div th:switch="${timeLine.retweet.user.userId}">
+										<a th:case="${login_user.userId}" href="javascript:void(0);" th:onClick="'document.block'+${timeLine.retweet.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a>
+										<a th:case="*" href="javascript:;" th:onClick="'document.block'+${timeLine.retweet.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a> 
+									</div>
+									<input type="hidden" name="block_user_id" th:value="${timeLine.retweet.user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+							</div>
+							</div>
+						
+						</div>
+						<div th:unless="${timeLine.retweetId}">
+							<div class="row">
+							<div class="card-header" th:if="${timeLine.replyId}">
+								<div class="col-md-1"></div>
+								<div class="col-md-1">
+									<img src="img/reply.png" alt="サンプル" width="20" height="20"/>
+								</div>
+								<div class="col-md-10">
+									<span th:text="'返信先:'+${timeLine.reply.user.userName}+'さん'"></span>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<!-- ユーザアイコン -->
+								<div class="thumbnail">
+									<img th:src="${timeLine.user.topPictureUrl}"/>
+								</div>
+								
+							</div>
+							<div class="col-md-9">
+							<form action="timeLine/profile" method="POST">
+								
+								<div class="card-title">
+									<span th:text="${timeLine.user.userName}"></span>
+									<input type="submit" name="timeLine_user_id" th:value="${timeLine.user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</div>
+								
+							</form>
+							<div class="card-content">
+								<div th:if="${timeLine.replyId}">
+										<form action="timeLine/profile" method="POST" th:name="${timeLine.reply.user.userId}">
+										<a href="javascript:;" th:onClick="'document.'+${timeLine.reply.user.userId}+'.submit();'"><span th:text="'@'+${timeLine.reply.user.userId}"></span></a>
+										<input type="hidden" name="timeLine_user_id" th:value="${timeLine.reply.user.userId}" />
+										<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+									</form>
+								</div>
+								<div th:text="${timeLine.detail}">detail</div>
+								<input type="hidden" name="button_id" th:value="${timeLine.tweetId}" />
+								<!-- ツイート画像 -->
+								<div>
+									<div class="thumbnail" th:if="${timeLine.mediaUrl}">
+										<img th:src="${timeLine.mediaUrl}" />
 									</div>
 								</div>
 							</div>
 						</div>
-						
-						<form action="timeLine/retweet" method="POST">
-							<a><input type="submit" name="retweet" value="⇔" /></a> <input
-								type="hidden" name="retweet_id" th:value="${timeLine.tweetId}" />
-								<input type="hidden"
-								th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						</form>
-						<form action="timeLine/favorite" method="POST">
-							<a><input type="submit" name="favorite" value="☆" /></a> <input
-								type="hidden" name="favorite_tweet_id"
-								th:value="${timeLine.tweetId}" /> <input type="hidden"
-								th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-						</form>
-						<div th:switch="${timeLine.userId}">
-							<form action="timeLine/remove" method="POST">
-								<a><input type="submit" name="remove" value="×" th:case="${login_user.userId}"/></a>
-								<input type="hidden" name="remove_id" th:value="${timeLine.tweetId}"/>
-								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-							</form>
-							<form action="timeLine/block" method="POST">
-								<a><input type="submit" name="block" value="🚫" th:case="*"/></a> 
-								<input type="hidden" name="block_user_id" th:value="${timeLine.userId}" />
-								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-							</form>
 						</div>
+						<div class="row">
+						<div class="col-md-2"></div>
+						<div class="col-md-9">
+							<div class="col-md-3">
+							<div class="card-button" style="display: inline-flex"></div>
+								<a href="javascript:;" data-toggle="modal" th:attr="data-target='#modal'+${timeLine.user.userId}" ><img src="img/reply.png" width="30" height="30"/></a>
+								<!-- <button type="submit" data-toggle="modal" data-target="#modal">⇒</button>-->
+								<!-- 2.モーダルの配置 -->
+								<form action="timeLine/reply" method="POST" enctype="multipart/form-data">
+								<div class="modal" th:id="'modal'+${timeLine.user.userId}" tabindex="-1">
+									<div class="modal-dialog">
+										<!-- 3.モーダルのコンテンツ -->
+										<div class="modal-content">
+											<!-- 4.モーダルのヘッダ -->
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="modal-label">
+													<!-- <label for="recipient-name" class="control-label" id="recipient-name"></label>-->
+													<span th:text="'@'+${timeLine.user.userId}+'さんへの返信'"></span>
+												</h4>
+											</div>
+											<!-- 5.モーダルのボディ -->
+											<div class="modal-body">
+												<textarea rows="3" class="form-control" id="reply_text"
+													name="tweet"></textarea>
+											</div>
+											<span class="count_num">140</span>
+										
+										<script type="text/javascript">
+											$(function() {
+
+												// 初期状態での文字数取得・表示
+												var max = 140;
+												var min = 0;
+												var txt = $('textarea#reply_text').val(), new_txt = $.trim(txt.replace(/\n/g, "")), 
+												couter = max - new_txt.length;
+												
+												$('.count_num').html(couter);
+												if (couter == 140) {
+													$('#reply_btn').attr('disabled', 'disabled');
+												}
+												$('#replyFile').on("change", function() {
+										            var file = this.files[0];
+										            if(file != null) {
+										                $('#reply_btn').removeAttr('disabled');
+										            }else{
+										            	$('#reply_btn').attr('disabled','disabled');
+										            }
+										        });
+												
+
+												// 入力時の文字数取得・表示、アラート表示
+												$('textarea#reply_text').bind('keydown keyup keypress change',function() {
+													var txt = $(this).val(), new_txt = $.trim(txt.replace(/\n/g,"")), 
+													couter = max - new_txt.length;
+													$('.count_num').html(couter);
+													if (min > couter) {
+														$('#reply_btn').attr('disabled', 'disabled');
+														$('.count_num').css("color","red");
+													} else  if(couter == max){
+														$('#reply_btn').attr('disabled', 'disabled');
+													} else{
+														$('#reply_btn').removeAttr('disabled');
+														$('.count_num').css("color","");
+													}
+												});												
+											});
+										</script>
+											<!-- 6.モーダルのフッタ -->
+											<div class="modal-footer">
+												<input type="file" class="btn btn-default" name="upImg" id="inputFile"/>
+												<input type="hidden" name="reply_id" th:value="${timeLine.tweetId}" />
+												<button type="submit" class="btn btn-primary" id="reply_btn">ツイート</button>
+												<input type="hidden" th:name="${_csrf.parameterName}"
+													th:value="${_csrf.token}" />
+											</div>
+										</div>
+									</div>
+								</div>
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/retweet" method="POST" th:name="'retweet'+${timeLine.tweetId}">
+									<a href="javascript:;" th:onClick="'document.retweet'+${timeLine.tweetId}+'.submit();'" ><img src="img/retweet.png" width="30" height="30"/></a> 
+									<input type="hidden" name="retweet_id"
+										th:value="${timeLine.tweetId}" /> <input type="hidden"
+										th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/favorite" method="POST" th:name="'favorite'+${timeLine.tweetId}">
+									<a href="javascript:;" th:onClick="'document.favorite'+${timeLine.tweetId}+'.submit();'" ><img src="img/favorite.png" width="30" height="30"/></a>  
+									<input type="hidden" name="favorite_tweet_id" th:value="${timeLine.tweetId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/block" method="POST" th:name="'block'+${timeLine.user.userId}">
+									<div th:switch="${timeLine.user.userId}">
+										<a th:case="${login_user.userId}" href="javascript:void(0);" th:onClick="'document.block'+${timeLine.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a>
+										<a th:case="*" href="javascript:;" th:onClick="'document.block'+${timeLine.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a> 
+									</div>
+									<input type="hidden" name="block_user_id" th:value="${timeLine.user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+							</div>
 						</div>
 					</div>
 				</section>

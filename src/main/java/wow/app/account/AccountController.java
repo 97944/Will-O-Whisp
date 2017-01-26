@@ -83,6 +83,8 @@ public class AccountController {
 	    user.setUserId(id);
 	    user.setUserName(name);
 	    user.setPassword(passwordHash);
+	    user.setHeadPictureUrl("img/NoImage.png");
+	    user.setTopPictureUrl("img/NoImage.png");
 	    
 		userService.create(user);
 		System.out.println("アカウント作成完了");

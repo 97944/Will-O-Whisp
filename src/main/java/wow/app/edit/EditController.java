@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
+import wow.OtherLogic;
 import wow.domain.model.Block;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
@@ -57,13 +59,16 @@ public class EditController {
 			@RequestParam("profile") String profile,
 			@RequestParam("old_password") String oldPassword,
 			@RequestParam("new_password") String newPassword,
-			@RequestParam("lock") int lock,RedirectAttributes attributes){
+			@RequestParam("lock") int lock,
+			@RequestParam("topPicture")MultipartFile topPicture,
+			@RequestParam("headPicture")MultipartFile headPicture,
+			RedirectAttributes attributes){
 		
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = userDetails.getUser();
         
         if(encoder.matches(oldPassword,userDetails.getUser().getPassword())){
         	String newPasswordHash = encoder.encode(newPassword);
-        	User user = userDetails.getUser();
         	user.setUserName(userName);
         	user.setProfile(profile);
         	user.setPassword(newPasswordHash);
@@ -73,6 +78,15 @@ public class EditController {
         }else{
         	System.out.println("パスワード確認失敗");
         }
+        
+        user.setUserName(userName);
+        user.setProfile(profile);
+        user.setLock(lock);
+        user.setTopPicture(OtherLogic.multipartFileToHexString(topPicture));
+        user.setHeadPicture(OtherLogic.multipartFileToHexString(headPicture));
+        
+        userService.update(user);
+        
         attributes.addAttribute("userId",userDetails.getUser().getUserId());
         return "redirect:/profile";
 	}

@@ -3,6 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="css/bootstrap.min.css" rel="stylesheet"></link>
+<link href="css/profile.css" rel="stylesheet"></link>
 <link href="css/search.css" rel="stylesheet"></link>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -10,8 +11,8 @@
 <script type="text/javascript">
 	function ChangeTab(tabname) {
 		// 全部消す
-		document.getElementById('tab1').style.display = 'none';
-		document.getElementById('tab2').style.display = 'none';
+		document.getElementById('tweetTab').style.display = 'none';
+		document.getElementById('userTab').style.display = 'none';
 		// 指定箇所のみ表示
 		document.getElementById(tabname).style.display = 'block';
 	}
@@ -22,70 +23,299 @@
 </head>
 <body bgcolor="#CCCCCC">
 	<div th:replace="common/header :: header"></div>
+
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-12">
+			<div class="col-md-12">
 				<div class="search_text">
 					<span th:text="${search_text}"></span>
 				</div>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-3"></div>
-			<div class="col-md-6">
-				<div class="tabbox" style="float: center">
-					<p class="tabs">
-						<a href="#tab1" class="tab1"
-							onclick="ChangeTab('tab1'); return false;">ツイート<br></br> <span
-							th:text="${count_tweet}"></span></a> <a href="#tab2" class="tab2"
-							onclick="ChangeTab('tab2'); return false;">ユーザー名<br></br> <span
-							th:text="${count_follow}"></span></a>
-					</p>
-					<div id="tab1" class="tab">
-						<section class="card" th:each="search_tweet:${search_tweet}"
-							style="float: center">
+			<div class="col-md-12">
+				<!-- Twitter風タブ(start) -->
+				<div class="panel with-nav-tabs panel-default">
+					<div class="panel-heading">
+						<!-- 各タブの表示 -->
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#tweetTab" data-toggle="tab"
+								onclick="ChangeTab('tweetTab'); return false;">ツイート<br></br>
+									<span th:text="${count_tweet}"></span></a></li>
+							<li><a href="#userTab" data-toggle="tab"
+								onclick="ChangeTab('userTab'); return false;">ユーザ<br></br> <span
+									th:text="${count_follow}"></span></a></li>
+						</ul>
+					</div>
+					<div class="panel-body">
+						<!-- ツイートタブ (start) -->
+						<div class="tab-pane fade in active" id="tweetTab">
+							<section class="card" th:each="search_tweet:${search_tweet}">
+					<div th:if="${search_tweet.retweetId}">
+						<div class="row">
+							<div class="card-header">
+								<div class="col-md-1"></div>
+								<div class="col-md-1">
+									<img src="img/retweet.png" alt="サンプル" width="20" height="20"/>
+								</div>
+								<div class="col-md-10">
+									<span th:text="${search_tweet.user.userName}+'さんがリツイートしました'"></span>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<!-- ユーザアイコン -->
+									<div class="thumbnail">
+									<img th:src="${search_tweet.retweet.user.topPictureUrl}"/>
+								</div>
+								
+							</div>
+							<div class="col-md-9">
 							<form action="timeLine/profile" method="POST">
+								
+								
 								<div class="card-title">
-									<span th:text="${search_tweet.user.userName}"></span>
-									<input type="submit" name="timeLine_user_id" th:value="${search_tweet.userId}" />
+									<span th:text="${search_tweet.retweet.user.userName}"></span>
+									<input type="submit" name="timeLine_user_id" th:value="${search_tweet.retweet.user.userId}" />
 									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 								</div>
+								
 							</form>
 							<div class="card-content">
-								<a th:text="${search_tweet.detail}">detail</a> <input
-									type="hidden" name="button_id"
-									th:value="${search_tweet.tweetId}" />
-							</div>
-							<div class="card-button" style="display: inline-flex">
-								<a><input type="submit" name="reply" value="⇒" /></a> <a><input
-									type="submit" name="retweet" value="⇔" /></a>
-								<form action="profile/favorite" method="POST">
-									<a><input type="submit" name="favorite" value="☆" /></a> <input
-										type="hidden" name="favorite_tweet_id"
-										th:value="${search_tweet.tweetId}" />
-										<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-								</form>
-								<a><input type="submit" name="block" value="🚫" /></a>
-							</div>
-						</section>
-					</div>
-					<div id="tab2" class="tab">
-						<form action="search" method="POST">
-							<section class="profile_card"
-								th:each="search_user:${search_user}">
-								<div class="profile_card-name">
-									<a th:text="${search_user.userName}"></a>
+								<div th:text="${search_tweet.retweet.detail}">detail</div>
+								<input type="hidden" name="button_id" th:value="${search_tweet.retweetId}" />
+								<!-- ツイート画像 -->
+								<div>
+									<div class="thumbnail" th:if="${search_tweet.retweet.mediaUrl}">
+										<img th:src="${search_tweet.retweet.mediaUrl}" />
+									</div>
 								</div>
-								<div class="profile_card-id">
-									<input type="submit" name="user_id"
-										th:value="${search_user.userId}" />
+							</div>
+						</div>
+						</div>
+						<div class="row">
+						<div class="col-md-2"></div>
+						<div class="col-md-9">
+							<div class="col-md-3">
+							<div class="card-button" style="display: inline-flex"></div>
+								<a href="javascript:;" data-toggle="modal" th:attr="data-target='#modal'+${search_tweet.retweet.user.userId}" ><img src="img/reply.png" width="30" height="30"/></a>
+								<!-- <button type="submit" data-toggle="modal" data-target="#modal">⇒</button>-->
+								<!-- 2.モーダルの配置 -->
+								<div class="modal" th:id="'modal'+${search_tweet.retweet.user.userId}" tabindex="-1">
+									<div class="modal-dialog">
+										<!-- 3.モーダルのコンテンツ -->
+										<div class="modal-content">
+											<!-- 4.モーダルのヘッダ -->
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="modal-label">
+													<!-- <label for="recipient-name" class="control-label" id="recipient-name"></label>-->
+													<span th:text="'@'+${search_tweet.retweet.user.userId}+'さんへの返信'"></span>
+												</h4>
+											</div>
+											<!-- 5.モーダルのボディ -->
+											<div class="modal-body">
+												<textarea rows="3" class="form-control" id="recipient-name"
+													name="tweet" th:text="'@'+${search_tweet.retweet.user.userId}"></textarea>
+											</div>
+											<!-- 6.モーダルのフッタ -->
+											<div class="modal-footer">
+												<button type="submit" class="btn btn-primary">ツイート</button>
+												<input type="hidden" th:name="${_csrf.parameterName}"
+													th:value="${_csrf.token}" />
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/retweet" method="POST" th:name="'retweet'+${search_tweet.retweetId}">
+									<a href="javascript:;" th:onClick="'document.retweet'+${search_tweet.retweetId}+'.submit();'" ><img src="img/retweet.png" width="30" height="30"/></a> 
+									<input type="hidden" name="retweet_id"
+										th:value="${search_tweet.retweetId}" /> <input type="hidden"
+										th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/favorite" method="POST" th:name="'favorite'+${search_tweet.retweetId}">
+									<a href="javascript:;" th:onClick="'document.favorite'+${search_tweet.retweetId}+'.submit();'" ><img src="img/favorite.png" width="30" height="30"/></a>  
+									<input type="hidden" name="favorite_tweet_id" th:value="${search_tweet.retweetId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/block" method="POST" th:name="'block'+${search_tweet.retweet.user.userId}">
+									<div th:switch="${search_tweet.retweet.user.userId}">
+										<a th:case="${login_user.userId}" href="javascript:void(0);" th:onClick="'document.block'+${search_tweet.retweet.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a>
+										<a th:case="*" href="javascript:;" th:onClick="'document.block'+${search_tweet.retweet.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a> 
+									</div>
+									<input type="hidden" name="block_user_id" th:value="${search_tweet.retweet.user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+							</div>
+							</div>
+						
+						</div>
+						<div th:unless="${search_tweet.retweetId}">
+							<div class="row">
+							<div class="card-header" th:if="${search_tweet.replyId}">
+								<div class="col-md-1"></div>
+								<div class="col-md-1">
+									<img src="img/reply.png" alt="サンプル" width="20" height="20"/>
+								</div>
+								<div class="col-md-10">
+									<span th:text="'返信先:'+${search_tweet.reply.user.userName}+'さん'"></span>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<!-- ユーザアイコン -->
+								<div class="thumbnail">
+									<img th:src="${search_tweet.user.topPictureUrl}"/>
+								</div>
+								
+							</div>
+							<div class="col-md-9">
+							<form action="timeLine/profile" method="POST">
+								
+								<div class="card-title">
+									<span th:text="${search_tweet.user.userName}"></span>
+									<input type="submit" name="timeLine_user_id" th:value="${search_tweet.user.userId}" />
 									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 								</div>
-								<div class="profile_card-profile">
-									<a th:text="${search_user.profile}"></a>
+								
+							</form>
+							<div class="card-content">
+								<div th:if="${search_tweet.replyId}">
+										<form action="timeLine/profile" method="POST" th:name="${search_tweet.reply.user.userId}">
+										<a href="javascript:;" th:onClick="'document.'+${search_tweet.reply.user.userId}+'.submit();'"><span th:text="'@'+${search_tweet.reply.user.userId}"></span></a>
+										<input type="hidden" name="timeLine_user_id" th:value="${search_tweet.reply.user.userId}" />
+										<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+									</form>
 								</div>
+								<div th:text="${search_tweet.detail}">detail</div>
+								<input type="hidden" name="button_id" th:value="${search_tweet.tweetId}" />
+								<!-- ツイート画像 -->
+								<div>
+									<div class="thumbnail" th:if="${search_tweet.mediaUrl}">
+										<img th:src="${search_tweet.mediaUrl}" />
+									</div>
+								</div>
+							</div>
+						</div>
+						</div>
+						<div class="row">
+						<div class="col-md-2"></div>
+						<div class="col-md-9">
+							<div class="col-md-3">
+							<div class="card-button" style="display: inline-flex"></div>
+								<a href="javascript:;" data-toggle="modal" th:attr="data-target='#modal'+${search_tweet.user.userId}" ><img src="img/reply.png" width="30" height="30"/></a>
+								<!-- <button type="submit" data-toggle="modal" data-target="#modal">⇒</button>-->
+								<!-- 2.モーダルの配置 -->
+								<div class="modal" th:id="'modal'+${search_tweet.user.userId}" tabindex="-1">
+									<div class="modal-dialog">
+										<!-- 3.モーダルのコンテンツ -->
+										<div class="modal-content">
+											<!-- 4.モーダルのヘッダ -->
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h4 class="modal-title" id="modal-label">
+													<!-- <label for="recipient-name" class="control-label" id="recipient-name"></label>-->
+													<span th:text="'@'+${search_tweet.user.userId}+'さんへの返信'"></span>
+												</h4>
+											</div>
+											<!-- 5.モーダルのボディ -->
+											<div class="modal-body">
+												<textarea rows="3" class="form-control" id="recipient-name"
+													name="tweet" th:text="'@'+${search_tweet.user.userId}"></textarea>
+											</div>
+											<!-- 6.モーダルのフッタ -->
+											<div class="modal-footer">
+												<button type="submit" class="btn btn-primary">ツイート</button>
+												<input type="hidden" th:name="${_csrf.parameterName}"
+													th:value="${_csrf.token}" />
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/retweet" method="POST" th:name="'retweet'+${search_tweet.tweetId}">
+									<a href="javascript:;" th:onClick="'document.retweet'+${search_tweet.tweetId}+'.submit();'" ><img src="img/retweet.png" width="30" height="30"/></a> 
+									<input type="hidden" name="retweet_id"
+										th:value="${search_tweet.tweetId}" /> <input type="hidden"
+										th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/favorite" method="POST" th:name="'favorite'+${search_tweet.tweetId}">
+									<a href="javascript:;" th:onClick="'document.favorite'+${search_tweet.tweetId}+'.submit();'" ><img src="img/favorite.png" width="30" height="30"/></a>  
+									<input type="hidden" name="favorite_tweet_id" th:value="${search_tweet.tweetId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+								<div class="col-md-3">
+								<form action="timeLine/block" method="POST" th:name="'block'+${search_tweet.user.userId}">
+									<div th:switch="${search_tweet.user.userId}">
+										<a th:case="${login_user.userId}" href="javascript:void(0);" th:onClick="'document.block'+${search_tweet.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a>
+										<a th:case="*" href="javascript:;" th:onClick="'document.block'+${search_tweet.user.userId}+'.submit();'" ><img src="img/block.png" width="30" height="30"/></a> 
+									</div>
+									<input type="hidden" name="block_user_id" th:value="${search_tweet.user.userId}" />
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+								</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+
+						</div>
+						<!-- ユーザタブ (start) -->
+						<div class="tab-pane fade in active" id="userTab">
+							<section class="twPc-div profile_card"
+								th:each="search_user:${search_user}">
+								<form action="timeLine/profile" method="POST"
+									th:name="${search_user.userId}">
+									<!-- ユーザプロフィールカード (start)-->
+									<div class="twPc-div">
+										<!-- ユーザヘッダ画像 -->
+										<a class="twPc-bg twPc-block"
+											th:style="'background-image: url('+${search_user.headPictureUrl}+');'"></a>
+										<div>
+											<!-- ユーザアイコン画像 -->
+											<a th:title="${search_user.userName}" href="javascript:;"
+												th:onclick="'document.'+${search_user.userId}+'.submit();'"
+												class="twPc-avatarLink"> <img alt="topPicture"
+												th:src="${search_user.topPictureUrl}" class="twPc-avatarImg" />
+												<input type="hidden" name="user_id"
+												th:value="${search_user.userId}" /> <input type="hidden"
+												th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+											</a>
+											<!-- ユーザ名、ユーザID -->
+											<div class="twPc-divUser">
+												<div class="twPc-divName">
+													<a href="" th:text="${search_user.userName}"></a>
+												</div>
+												<input type="hidden" th:name="${_csrf.parameterName}"
+													th:value="${_csrf.token}" /> <input type="hidden"
+													name="timeLine_user_id" th:value="${search_user.userId}" />
+												<a href="#" onClick="document.toUserProfile.submit();"><span
+													th:text="'@'+${search_user.userId}"></span></a>
+											</div>
+											<div class="twPc-divStats">
+												<a th:text="${search_user.profile}"></a>
+											</div>
+										</div>
+									</div>
+								</form>
 							</section>
-						</form>
+						</div>
+						<!-- ユーザのプロフィールカード (end)-->
+
 					</div>
 				</div>
 			</div>
@@ -93,7 +323,7 @@
 	</div>
 	<script type="text/javascript">
 		// デフォルトのタブを選択
-		ChangeTab('tab1');
+		ChangeTab('tweetTab');
 	</script>
 
 </body>

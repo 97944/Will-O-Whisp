@@ -4,7 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="css/bootstrap.min.css" rel="stylesheet"></link>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <title></title>
 </head>
@@ -12,16 +13,22 @@
 	<h3>ログインフォーム</h3>
 
 	<p th:if="${param.error}">Error!</p>
-	<a th:href="@{/account/create(form)}" href="../account/createForm.html">アカウント新規作成</a>
+	<a th:href="@{/account/create(form)}" href="../account/createForm.html" class="btn btn-primary">アカウント新規作成</a>
+	<!-- アカウント作成ボタン -->
+	
+	<header class="jumbotron"
+		style="background: url(img/wowLogo2.png); background-position: center center; background-size: 30%; background-repeat: no-repeat; height: 200px;">
+		<div class="container"></div>
+	</header>
 	<form th:action="@{/login}" method="POST">
 		<table>
 			<tr>
 				<td><label for="username">User:</label></td>
-				<td><input type="text" id="username" name="username" value="admin"/></td>
+				<td><input type="text" id="username" name="username" value="testuser"/></td>
 			</tr>
 			<tr>
 				<td><label for="password">Password:</label></td>
-				<td><input type="password" id="password" name="password" value="demo"/></td>
+				<td><input type="password" id="password" name="password" value="testpw"/></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>

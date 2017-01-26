@@ -11,20 +11,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.MapsId;
 
 import wow.domain.model.converter.LocalDateTimeConverter;
  
-@Entity(name="retweet_record")
-public class Retweet implements Serializable{
+@Entity(name="reply_record")
+public class Reply implements Serializable{
  
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-    private String retweetId;
+    private String replyId;
     private String userId;
     private String detail;
     @Column(nullable = false)
@@ -33,12 +32,19 @@ public class Retweet implements Serializable{
     private String media;
     private String mediaUrl;
     private int relation;
-    private String replyId;
     
     @ManyToOne
     @JoinColumn(name = "userId", insertable = false, updatable = false)
     @MapsId("userId")
     private User user;
+    
+    public String getReplyId() {
+        return replyId;
+    }
+ 
+    public void setReplyId(String replyId) {
+        this.replyId = replyId;
+    }
     
     public String getUserId() {
         return userId;
@@ -87,23 +93,7 @@ public class Retweet implements Serializable{
     public void setRelation(int relation){
     	this.relation = relation;
     }
-    
-    public String getReplyId(){
-    	return replyId;
-    }
-    
-    public void setReplyId(String replyId){
-    	this.replyId = replyId;
-    }
-    
-    public String getRetweetId(){
-    	return retweetId;
-    }
-    
-    public void setRetweetId(String retweetId){
-    	this.retweetId = retweetId;
-    }
-    
+  
     public User getUser(){
     	return user;
     }
@@ -111,5 +101,5 @@ public class Retweet implements Serializable{
     public void setUser(User user){
     	this.user = user;
     }
-   
+    
 }

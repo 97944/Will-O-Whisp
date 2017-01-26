@@ -32,7 +32,7 @@ public class Tweet implements Serializable{
     private String media;
     private String mediaUrl;
     private int relation;
-    private String relationId;
+    private String replyId;
     private String retweetId;
     
     @ManyToOne
@@ -44,6 +44,11 @@ public class Tweet implements Serializable{
     @JoinColumn(name = "retweetId", insertable = false, updatable = false)
     @MapsId("retweetId")
     private Retweet retweet;
+    
+    @ManyToOne
+    @JoinColumn(name = "replyId", insertable = false, updatable = false)
+    @MapsId("replyId")
+    private Reply reply;
     
     public String getTweetId() {
         return tweetId;
@@ -101,12 +106,12 @@ public class Tweet implements Serializable{
     	this.relation = relation;
     }
     
-    public String getRelationId(){
-    	return relationId;
+    public String getReplyId(){
+    	return replyId;
     }
     
-    public void setRelationId(String relationId){
-    	this.relationId = relationId;
+    public void setReplyId(String replyId){
+    	this.replyId = replyId;
     }
     
     public String getRetweetId(){
@@ -131,5 +136,13 @@ public class Tweet implements Serializable{
     
     public void setRetweet(Retweet retweet){
     	this.retweet = retweet;
+    }
+    
+    public Reply getReply(){
+    	return reply;
+    }
+    
+    public void setReply(Reply reply){
+    	this.reply = reply;
     }
 }

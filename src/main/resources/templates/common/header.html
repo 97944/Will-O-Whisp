@@ -7,183 +7,6 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/textchange.js"></script>
-<style type="text/css">
-/* 表示領域全体 */
-div.tabbox {
-	margin: 0px;
-	padding: 0px;
-	width: 500px;
-}
-
-/* タブ部分 */
-p.tabs {
-	margin: 0px;
-	padding: 0px;
-}
-
-p.tabs a {
-	display: block;
-	width: 5em;
-	float: left;
-	margin: 0px 1px 0px 0px;
-	padding: 3px;
-	text-align: center;
-	border-radius: 12px 12px 0px 0px; /* 角を丸くする */
-}
-
-p.tabs a.tab1 {
-	background-color: blue;
-	color: white;
-}
-
-p.tabs a.tab2 {
-	background-color: #aaaa00;
-	color: white;
-}
-
-p.tabs a.tab3 {
-	background-color: red;
-	color: white;
-}
-
-p.tabs a.tab4 {
-	background-color: green;
-	color: white;
-}
-
-p.tabs a.tab5 {
-	background-color: #ff00ff;
-	color: white;
-}
-
-p.tabs a:hover {
-	color: yellow;
-}
-
-/* タブ中身のボックス */
-div.tab {
-	height: 300px;
-	overflow: auto;
-	clear: left;
-}
-
-div#tab1 {
-	border: 2px solid blue;
-	background-color: #ccffff;
-}
-
-div#tab2 {
-	border: 2px solid #aaaa00;
-	background-color: #ffffcc;
-}
-
-div#tab3 {
-	border: 2px solid red;
-	background-color: #ffcccc;
-}
-
-div#tab4 {
-	border: 2px solid green;
-	background-color: #00ff9a;
-}
-
-div#tab5 {
-	border: 2px solid #ff00ff;
-	background-color: #ffaaff;
-}
-
-div.tab p {
-	margin: 0.5em;
-}
-
-.card {
-	width: 350px;
-	background: #fff;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
-	margin: 5px;
-}
-
-.card-img {
-	border-radius: 5px 5px 0 0;
-	max-width: 100%;
-	height: auto;
-}
-
-.card-content {
-	padding: 20px;
-}
-
-.card-title {
-	font-size: 20px;
-	margin-bottom: 20px;
-	text-align: center;
-	color: #333;
-}
-
-.card-text {
-	color: #777;
-	font-size: 14px;
-	line-height: 1.5;
-}
-
-.card-link {
-	text-align: center;
-	border-top: 1px solid #eee;
-	padding: 20px;
-}
-
-.card-link a {
-	text-decoration: none;
-	color: #0bd;
-	margin: 0 10px;
-}
-
-.card-link a:hover {
-	color: #0090aa;
-}
-
-.profile_card {
-	word-wrap: break-word;
-	background: #fff;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
-	float: left;
-	overflow: hidden;
-	width: 200px;
-	height: 200px;
-	margin: 10px;
-	padding: 10px;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px #ccc;
-}
-
-.profile_card-name {
-	font-size: 20px;
-	margin-bottom: 20px;
-	text-align: center;
-	color: #333;
-}
-
-.profile_card-id {
-	font-size: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-	color: #333;
-}
-
-.profile_card-profile {
-	font-size: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-	color: #333;
-}
-
-.profile_card-count {
-	text-align: left;
-	font-size: 15px;
-}
-</style>
 <meta charset="UTF-8" />
 <title>タイムライン</title>
 </head>
@@ -264,7 +87,7 @@ div.tab p {
 									<!-- 5.モーダルのボディ -->
 									<div class="modal-body">
 										<textarea placeholder="いまどうしてる？" rows="3" class="form-control"
-											id="input_text" maxlength="140" name="tweet"></textarea>
+											id="input_text" name="tweet"></textarea>
 										<span class="count_num">140</span>
 										
 										<script type="text/javascript">
@@ -275,10 +98,20 @@ div.tab p {
 												var min = 0;
 												var txt = $('textarea#input_text').val(), new_txt = $.trim(txt.replace(/\n/g, "")), 
 												couter = max - new_txt.length;
+												
 												$('.count_num').html(couter);
 												if (couter == 140) {
 													$('#tweet_btn').attr('disabled', 'disabled');
 												}
+												$('#inputFile').on("change", function() {
+										            var file = this.files[0];
+										            if(file != null) {
+										                $('#tweet_btn').removeAttr('disabled');
+										            }else{
+										            	$('#tweet_btn').attr('disabled','disabled');
+										            }
+										        });
+												
 
 												// 入力時の文字数取得・表示、アラート表示
 												$('textarea#input_text').bind('keydown keyup keypress change',function() {
@@ -300,7 +133,7 @@ div.tab p {
 									</div>
 									<!-- 6.モーダルのフッタ -->
 									<div class="modal-footer">
-										<input type="file" class="btn btn-default" name="upImg"/>
+										<input type="file" class="btn btn-default" name="upImg" id="inputFile"/>
 										<button type="button" class="btn btn-default"
 											data-dismiss="modal">キャンセル</button>
 										<button type="submit" class="btn btn-primary" id="tweet_btn">ツイート</button>

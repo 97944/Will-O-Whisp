@@ -26,43 +26,14 @@
 </head>
 <body bgcolor="#cccccc">
 	<div th:replace="common/header :: header"></div>
+	<form action="edit" method="POST" enctype="multipart/form-data">
 		<div class="container">
-			<form action="edit" method="POST">
 			<div class="row">
 				<div class="col-md-3">
 					<input type="text" name="user_name"
 						th:value="${login_user.userName}" />
 					<div th:text="'@'+${login_user.userId}"></div>
-					<input type="text" name="profile"
-						th:value="${login_user.profile}" />
-				</div>
-
-				<div class="col-md-5">
-					<h3>パスワード変更</h3>
-					<input type="password" name="old_password" placeholder="現在のパスワード"/> <input
-						type="password" name="new_password" placeholder="新しいパスワード"/> <input type="password"
-						name="new_password2" placeholder="新しいパスワード"/>
-				</div>
-				<div class="col-md-4">
-					<h3>ツイッター</h3>
-					<input type="radio" name="lock" value="0" />公開 <input
-						type="radio" name="lock" value="1" />非公開
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-				</div>
-				<div class="col-md-5">
-					<button type="submit" class="btn btn-default" name="cancel">キャンセル</button>
-				</div>
-				<div class="col-md-4">
-					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-					<button type="submit" class="btn btn-primary" name="save">変更を保存</button>
-				</div>
-			</div>
-			</form>
-			<div class="row">
-				<div class="col-md-3">
+					<input type="text" name="profile" th:value="${login_user.profile}" />
 					<!-- 折り畳み展開ポインタ -->
 					<div
 						onclick="obj=document.getElementById('open').style; obj.display=(obj.display=='none')?'block':'none';">
@@ -74,20 +45,54 @@
 					<div id="open" style="display: none; clear: both;">
 						<section class="block_card" th:each="block_user:${block_user}">
 							<div class="block_card-name">
-								<span th:text="${block_user.userName} +' '+ ${block_user.userId}"></span>
+								<span
+									th:text="${block_user.userName} +' '+ ${block_user.userId}"></span>
 							</div>
 							<div class="block_card-button">
-							<form action="profile/unblock" method="POST">
-								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-								<input type="hidden" name="unblock_user_id" th:value="${block_user.userId}"/>
-								<button type="submit" class="btn btn-danger">ブロック解除</button>
-							</form>
+								<button type="submit" class="btn btn-danger">解除</button>
 							</div>
 						</section>
 					</div>
 					<!--// 折り畳まれ部分 -->
 				</div>
+
+				<div class="col-md-5">
+					<h3>パスワード変更</h3>
+					<input type="password" name="old_password" placeholder="現在のパスワード" />
+					<input type="password" name="new_password" placeholder="新しいパスワード" />
+					<input type="password" name="new_password2" placeholder="新しいパスワード" />
+				</div>
+				<div class="col-md-4">
+					<h3>ツイッター</h3>
+					<input type="radio" name="lock" value="0" />公開 <input type="radio"
+						name="lock" value="1" />非公開
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<!-- トップ画像変更 -->
+				<div class="col-md-5">
+					<h3>ユーザアイコン変更</h3>
+					<input type="file" class="btn btn-default" name="topPicture" />
+				</div>
+				<!--ヘッダ画像変更  -->
+				<div class="col-md-4">
+					<h3>ヘッダ画像変更</h3>
+					<input type="file" class="btn btn-default" name="headPicture" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-5">
+					<button type="submit" class="btn btn-default" name="cancel">キャンセル</button>
+				</div>
+				<div class="col-md-4">
+					<input type="hidden" th:name="${_csrf.parameterName}"
+						th:value="${_csrf.token}" />
+					<button type="submit" class="btn btn-primary" name="save">変更を保存</button>
+				</div>
 			</div>
 		</div>
+	</form>
 </body>
 </html>

@@ -1,10 +1,12 @@
-/* 表示領域全体 */
+@CHARSET "UTF-8";
+
+/* 陦ｨ遉ｺ鬆伜沺蜈ｨ菴� */
 div.tabbox {
 	margin: 0px;
 	padding: 0px;
 }
 
-/* タブ部分 */
+/* 繧ｿ繝夜Κ蛻� */
 p.tabs {
 	margin: 0px;
 	padding: 0px;
@@ -17,7 +19,7 @@ p.tabs a {
 	margin: 0px 1px 0px 0px;
 	padding: 3px;
 	text-align: center;
-	border-radius: 12px 12px 0px 0px; /* 角を丸くする */
+	border-radius: 12px 12px 0px 0px; /* 隗偵ｒ荳ｸ縺上☆繧� */
 }
 
 p.tabs a.tab1 {
@@ -49,7 +51,7 @@ p.tabs a:hover {
 	color: yellow;
 }
 
-/* タブ中身のボックス */
+/* 繧ｿ繝紋ｸｭ霄ｫ縺ｮ繝懊ャ繧ｯ繧ｹ */
 div.tab {
 	overflow: auto;
 	clear: left;
@@ -99,14 +101,24 @@ div.tab p {
 }
 
 .card-content {
+	font-size: 30px;
+}
+
+.card-icon {
 	padding: 20px;
+}
+
+.card-header {
+	font-size: 20px;
+	margin-bottom: 20px;
+	color: #777777;
 }
 
 .card-title {
 	font-size: 20px;
 	margin-bottom: 20px;
-	text-align: center;
-	color: #000000;
+	text-align: left;
+	color: #333;
 }
 
 .card-text {
@@ -210,4 +222,120 @@ div.tab p {
 	/* Set the fixed height of the footer here */
 	height: 60px;
 	background-color: #f5f5f5;
+}
+
+#タイムラインのプロフィールカード
+.twPc-div {
+	background: #fff none repeat scroll 0 0;
+	border: 1px solid #e1e8ed;
+	border-radius: 6px;
+	height: 200px;
+	max-width: 340px;
+}
+
+.twPc-bg {
+	background-position: 0 50%;
+	background-size: 100% auto;
+	border-bottom: 1px solid #c0c0c0;
+	border-radius: 4px 4px 0 0;
+	height: 100px;
+	width: 100%;
+}
+
+.twPc-block {
+	display: block !important;
+}
+
+.twPc-button {
+	margin: -35px -10px 0;
+	text-align: right;
+	width: 100%;
+}
+
+.twPc-avatarLink {
+	background-color: #fff;
+	border-radius: 6px;
+	display: inline-block !important;
+	float: left;
+	margin: -30px 5px 0 8px;
+	max-width: 100%;
+	padding: 1px;
+	vertical-align: bottom;
+}
+
+.twPc-avatarImg {
+	border: 2px solid #fff;
+	border-radius: 7px;
+	box-sizing: border-box;
+	color: #fff;
+	height: 72px;
+	width: 72px;
+}
+
+.twPc-divUser {
+	margin: 10px 0 0;
+}
+
+.twPc-divName {
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 21px;
+}
+
+.twPc-divName a {
+	color: inherit !important;
+}
+
+.twPc-divStats {
+	margin-left: 11px;
+	padding: 10px 0;
+}
+
+.twPc-Arrange {
+	box-sizing: border-box;
+	display: table;
+	margin: 0;
+	min-width: 100%;
+	padding: 0;
+	table-layout: auto;
+}
+
+ul.twPc-Arrange {
+	list-style: outside none none;
+	margin: 0;
+	padding: 0;
+}
+
+.twPc-ArrangeSizeFit {
+	display: table-cell;
+	padding: 0;
+	vertical-align: top;
+}
+
+.twPc-ArrangeSizeFit a:hover {
+	text-decoration: none;
+}
+
+.twPc-StatValue {
+	display: block;
+	font-size: 18px;
+	font-weight: 500;
+	transition: color 0.15s ease-in-out 0s;
+}
+
+.twPc-StatLabel {
+	color: #8899a6;
+	font-size: 10px;
+	letter-spacing: 0.02em;
+	overflow: hidden;
+	text-transform: uppercase;
+	transition: color 0.15s ease-in-out 0s;
+}
+
+#プロフィールの囲い
+.profileBox {
+	border: 4px double #408080;
+	margin: 2em 0;
+	padding: 2em;
+	border-radius: 20px; /* 角丸の指定 */
 }

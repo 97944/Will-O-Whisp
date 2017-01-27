@@ -2,34 +2,66 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
+<link href="../css/bootstrap.min.css" rel="stylesheet"></link>
+<link href="../css/loginForm.css" rel="stylesheet"></link>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
 <title>アカウント作成</title>
 </head>
 <body>
-	<h3>アカウント 作成</h3>
 
-	<form th:action="@{/account/create}" action="createFinish.html" th:object="${accountForm}" method="post">
-		<table class="user">
-			<tr>
-				<td>ユーザーID:</td>
-				<td><input type="text" name="user_id" th:value="${id}" /></td>
-				<td th:if="${id_error}" style="color:red">ユーザーIDは1文字以上15文字以下で、英数字+「_」のみ有効です</td>
-				<td th:if="${not_unique}" style="color:red">ユーザーIDが重複しています。</td>
-			</tr>
-			<tr>
-				<td>ユーザー名:</td>
-				<td><input type="text" name="user_name" th:value="${name}" /></td>
-				<td th:if="${name_error}" style="color:red">ユーザー名は1文字以上20文字以下です。</td>
-			</tr>
-			<tr>
-				<td>パスワード:</td>
-				<td><input type="password" name="user_password" th:value="${pass}" /></td>
-				<td th:if="${pass_error}" style="color:red">パスワードは4文字以上20文字以下で、英数字のみ有効です。</td>
-			</tr>
-		</table>
-		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-		<input type="submit" class="btn btn-default" value="キャンセル" />
-		<input type="submit" class="btn btn-primary" value="登録" />
-	</form>
+	<!-- 新設アカウント作成フォーム(start) -->
+	<div class="wrapper dark-header">
+		<!-- ヘッダ領域(start) -->
+		<header class="main-header">
+			<div class="logo">アカウント作成</div>
+			<div class="navbar navbar-static-top"></div>
+		</header>
+		<!-- ヘッダ領域(end) -->
+		<!-- ログインフォーム領域(start) -->
+		<section class="login-inner">
+			<div class="login-middle">
+				<div class="login-details">
+					<!-- WOWロゴ表示 -->
+					<div class="text-center">
+						<img src="/img/wowLogo2.png" width="40%" />
+					</div>
+					<form th:action="@{/account/create}" action="createFinish.html"
+						th:object="${accountForm}" method="post">
+						<!-- ユーザID入力欄 -->
+						<label>ユーザID</label>
+						<div th:if="${id_error}" style="color: red">ユーザーIDは1文字以上15文字以下で、英数字+「_」のみ有効です</div>
+						<div th:if="${not_unique}" style="color: red">ユーザーIDが重複しています。</div>
+						<label> <input type="text" name="user_id" th:value="${id}"
+							placeholder="ユーザID" />
+						</label>
+						<!-- ユーザ名 -->
+						<label>ユーザ名</label>
+						<div th:if="${name_error}" style="color: red">ユーザー名は1文字以上20文字以下です。</div>
+						<label><input type="text" name="user_name"
+							th:value="${name}" placeholder="ユーザ名" /> </label>
+						<!-- パスワード入力欄 -->
+						<label>パスワード</label>
+						<div th:if="${pass_error}" style="color: red">パスワードは4文字以上20文字以下で、英数字のみ有効です。</div>
+						<label> <input type="password" name="user_password"
+							th:value="${pass}" placeholder="パスワード" />
+						</label>
+						<!-- キャンセル・登録ボタン -->
+						<div class="btn-sub text-center">
+							<a class="btn btn-danger" href="../login/loginForm.html"
+								style="width: 140px;">キャンセル</a>
+							<button class="btn btn-primary" type="submit">登録</button>
+						</div>
+						<input type="hidden" th:name="${_csrf.parameterName}"
+							th:value="${_csrf.token}" />
+					</form>
+				</div>
+			</div>
+		</section>
+		<!-- ログインフォーム領域(end) -->
+	</div>
+	<!-- 新設アカウント作成フォーム(end) -->
 
 </body>
 </html>

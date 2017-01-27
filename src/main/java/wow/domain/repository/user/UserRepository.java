@@ -11,5 +11,7 @@ import wow.domain.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 	public User findByUserId(String userId);
-	public List<User> findByUserIdContaining(String text);
+	public List<User> findByUserIdContainingOrderByUserIdAsc(String text);
+	public List<User> findByUserNameContainingOrderByUserIdAsc(String text);
+	public List<User> findByUserIdContainsOrUserNameContainsOrderByUserIdAsc(String text,String text2);
 }

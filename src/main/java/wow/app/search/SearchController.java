@@ -38,12 +38,29 @@ public class SearchController {
     	model.addAttribute("login_user",user);
     	
     	// text内容が含まれるユーザーを検索する
-    	List<User> searchUser = userService.searchByUserId(text);
+    	/*List<User> searchUser = userService.searchByUserId(text);
+    	model.addAttribute("search_user",searchUser);*/
+    	
+    	List<User> searchUser = userService.searchUser(text,text);
     	model.addAttribute("search_user",searchUser);
+    	if(searchUser.size() == 0){
+    		model.addAttribute("user_none",true);
+    		System.out.println("ユーザーいないよ");
+    	}else{
+    		model.addAttribute("user_none",false);
+    	}
+    	
     	
     	// text内容が含まれるツイートを検索する
     	List<Tweet> searchTweet = tweetService.searchTweet(text);
     	model.addAttribute("search_tweet",searchTweet);
+    	if(searchTweet.size() == 0){
+    		model.addAttribute("tweet_none",true);
+    		System.out.println("ツイートないよ");
+    	}else{
+    		model.addAttribute("tweet_none",false);
+    	}
+    	
     	
     	// 検索文字列をセット
     	model.addAttribute("search_text",text);

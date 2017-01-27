@@ -1,0 +1,37 @@
+#input {
+  position: relative;
+  overflow: hidden;
+  height: 30px;
+  width: 30px;
+}
+#input_image {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#input_File {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30px;
+  filter: alpha(opacity = 0); /* for IE6, IE7 */
+  opacity: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.filebox {
+    position: relative;
+}
+.file {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    opacity: 0;
+    filter:alpha(opacity=0);
+}
+.fakefile {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+}

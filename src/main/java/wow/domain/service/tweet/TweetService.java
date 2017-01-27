@@ -33,7 +33,7 @@ public class TweetService {
 	ReplyRepository replyRepository;
 	
 	public List<Tweet> findTimeLine(String userId){
-		return tweetRepository.findByUserIdContainsOrderByTimeDesc(userId);
+		return tweetRepository.findByUserIdOrderByTimeDesc(userId);
 	}
 	
 	public List<Tweet> findFavoriteTweet(String userId){
@@ -41,7 +41,7 @@ public class TweetService {
 		List<Tweet> tweet = new ArrayList<Tweet>();
 		List<Tweet> dummyList = null;
 		for(int i=0;i<favorite.size();i++){
-			dummyList = tweetRepository.findByTweetIdContainsOrderByTimeDesc(favorite.get(i).getFavoriteTweetId());
+			dummyList = tweetRepository.findByTweetIdOrderByTimeDesc(favorite.get(i).getFavoriteTweetId());
 			for(int j=0;j<dummyList.size();j++){
 				tweet.add(dummyList.get(j));
 			}
@@ -52,11 +52,15 @@ public class TweetService {
 	public List<Tweet> searchTweet(String text){
 		return tweetRepository.findByDetailContainsOrderByTimeDesc(text);
 	}
-	public List<Tweet> searchMedia(String mediaUrl){
-		return tweetRepository.findByMediaUrlContainsOrderByTimeDesc(mediaUrl);
+	public List<Tweet> searchMedia(String mediaUrl,String userId){
+		return tweetRepository.findByMediaUrlContainsAndUserIdOrderByTimeDesc(mediaUrl,userId);
 	}
 	public Tweet searchTweetByTweetId(String tweetId){
 		return tweetRepository.findByTweetId(tweetId);
+	}
+	
+	public Favorite checkFavorite(String userId,String favoriteTweetId){
+		return favoriteTweetRepository.findByUserIdAndFavoriteTweetId(userId, favoriteTweetId);
 	}
 	
 	public void favoriteTweet(Favorite favorite){
@@ -71,6 +75,10 @@ public class TweetService {
 	
 	public void addTweet(Tweet tweet){
 		tweetRepository.save(tweet);
+	}
+	
+	public Tweet checkRetweet(String userId,String retweetId){
+		return tweetRepository.findByUserIdAndRetweetId(userId, retweetId);
 	}
 	
 	public void addRetweet(Retweet retweet){

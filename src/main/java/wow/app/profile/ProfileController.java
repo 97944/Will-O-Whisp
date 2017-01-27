@@ -75,6 +75,11 @@ public class ProfileController {
 		model.addAttribute("tweet", tweet);
 		model.addAttribute("count_tweet", tweet.size());
 		System.out.println("ツイート数" + tweet.size());
+		if(tweet.size() == 0){
+			model.addAttribute("tweet_none",true);
+		}else{
+			model.addAttribute("tweet_none",false);
+		}
 
 		// フォローユーザをDBから取ってきて、モデルにセット
 		List<Follow> follow = userService.loadFollowUserByUserId(userId);
@@ -85,6 +90,11 @@ public class ProfileController {
 		model.addAttribute("follow", followUser);
 		model.addAttribute("count_follow", followUser.size());
 		System.out.println("フォロー数" + followUser.size());
+		if(followUser.size() == 0){
+			model.addAttribute("follow_none",true);
+		}else{
+			model.addAttribute("follow_none",false);
+		}
 
 		// フォロワーをDBから取ってきて、モデルにセット
 		List<Follow> follower = userService.loadFollowerByUserId(userId);
@@ -95,6 +105,11 @@ public class ProfileController {
 		model.addAttribute("follower", followerUser);
 		model.addAttribute("count_follower", followerUser.size());
 		System.out.println("フォロワー数" + followerUser.size());
+		if(follower.size() == 0){
+			model.addAttribute("follower_none",true);
+		}else{
+			model.addAttribute("follower_none",false);
+		}
 
 		// いいねしたツイートをDBから取ってきて、モデルにセット
 		List<Tweet> favorite = tweetService.findFavoriteTweet(userId);
@@ -102,12 +117,22 @@ public class ProfileController {
 		model.addAttribute("favorite", favorite);
 		model.addAttribute("count_favorite", favorite.size());
 		System.out.println("お気に入り数" + favorite.size());
+		if(favorite.size() == 0){
+			model.addAttribute("favorite_none",true);
+		}else{
+			model.addAttribute("favorite_none",false);
+		}
 
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
-		List<Tweet> media = tweetService.searchMedia(userId);
+		List<Tweet> media = tweetService.searchMedia(userId,userId);
 		model.addAttribute("media",media);
 		model.addAttribute("count_media",media.size());
 		System.out.println("画像付きツイート数" +  media.size());
+		if(media.size() == 0){
+			model.addAttribute("media_none",true);
+		}else{
+			model.addAttribute("media_none",false);
+		}
 		
 		// ログインユーザーのフォローの有無
 		System.out.println("ログインユーザーのフォローの有無" + userDetails.getUser().getUserId());
@@ -219,6 +244,7 @@ public class ProfileController {
 				break;
 			}
 		}
+		attributes.addAttribute("userId",resetUserId);
 		return "redirect:/profile";
 	}
 	// フォローしてないユーザーの場合
@@ -234,6 +260,8 @@ public class ProfileController {
 		follow.setFollowUserId(followingUserId);
 		
 		userService.following(follow);
+		
+		attributes.addAttribute("userId",followingUserId);
 		
 		return "redirect:/profile";
 	}

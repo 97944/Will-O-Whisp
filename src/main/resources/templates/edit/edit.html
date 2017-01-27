@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="css/bootstrap.min.css" rel="stylesheet"></link>
 <link href="css/edit.css" rel="stylesheet"></link>
+<link href="css/common.css" rel="stylesheet"></link>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -19,6 +20,72 @@
 		document.getElementById(tabname).style.display = 'block';
 	}
 </script>
+<script type="text/javascript">
+				$(function(){
+				    var setFileInput = $('.topInput'),
+				    setFileImg = $('.imgView');
+				 
+				    setFileInput.each(function(){
+				        var selfFile = $(this),
+				        selfInput = $(this).find('input[type=file]'),
+				        prevElm = selfFile.find(setFileImg),
+				        orgPass = prevElm.attr('src');
+				 
+				        selfInput.change(function(){
+				            var file = $(this).prop('files')[0],
+				            fileRdr = new FileReader();
+				 
+				            if (!this.files.length){
+				                prevElm.attr('src', orgPass);
+				                return;
+				            } else {
+				                if (!file.type.match('image.*')){
+				                    prevElm.attr('src', orgPass);
+				                    return;
+				                } else {
+				                    fileRdr.onload = function() {
+				                        prevElm.attr('src', fileRdr.result);
+				                    }
+				                    fileRdr.readAsDataURL(file);
+				                }
+				            }
+				        });
+				    });
+				});
+				</script>
+<script type="text/javascript">
+				$(function(){
+				    var setFileInput = $('.headInput'),
+				    setFileImg = $('.imgView');
+				 
+				    setFileInput.each(function(){
+				        var selfFile = $(this),
+				        selfInput = $(this).find('input[type=file]'),
+				        prevElm = selfFile.find(setFileImg),
+				        orgPass = prevElm.attr('src');
+				 
+				        selfInput.change(function(){
+				            var file = $(this).prop('files')[0],
+				            fileRdr = new FileReader();
+				 
+				            if (!this.files.length){
+				                prevElm.attr('src', orgPass);
+				                return;
+				            } else {
+				                if (!file.type.match('image.*')){
+				                    prevElm.attr('src', orgPass);
+				                    return;
+				                } else {
+				                    fileRdr.onload = function() {
+				                        prevElm.attr('src', fileRdr.result);
+				                    }
+				                    fileRdr.readAsDataURL(file);
+				                }
+				            }
+				        });
+				    });
+				});
+				</script>
 
 <meta charset="UTF-8" />
 
@@ -26,14 +93,26 @@
 </head>
 <body bgcolor="#cccccc">
 	<div th:replace="common/header :: header"></div>
+		
 	<form action="edit" method="POST" enctype="multipart/form-data">
-		<div class="container">
+		<div class="row">
+			<!-- プロフィール（ヘッダ画像、ユーザアイコン） (start)-->
+			<div class="fb-profile">
+				<img align="left" class="fb-image-lg" th:src="${login_user.headPictureUrl}" alt="userHeaderImage" />
+				
+				<img align="left" class="fb-image-profile thumbnail" th:src="${login_user.topPictureUrl}" alt="userTopImage" />
+			</div>
+			<!-- プロフィール（ヘッダ画像、ユーザアイコン） (end)-->
+		</div>	
+		
+			
 			<div class="row">
-				<div class="col-md-3">
-					<input type="text" name="user_name"
-						th:value="${login_user.userName}" />
+				<div class="col-md-4" style="margin-left:36px">
+					<textarea name="user_name" th:text="${login_user.userName}" rows="1" cols="36"></textarea>
+					<div th:if="${name_error}" style="color:red">ユーザー名は1文字以上20文字以内で入力してください</div>
 					<div th:text="'@'+${login_user.userId}"></div>
-					<input type="text" name="profile" th:value="${login_user.profile}" />
+					<textarea name="profile" th:text="${login_user.profile}" rows="3" cols="36"></textarea>
+					<div th:if="${profile_error}" style="color:red">自己紹介文は160文字以内で入力してください</div>
 					<!-- 折り畳み展開ポインタ -->
 					<div
 						onclick="obj=document.getElementById('open').style; obj.display=(obj.display=='none')?'block':'none';">
@@ -43,56 +122,88 @@
 
 					<!-- 折り畳まれ部分 -->
 					<div id="open" style="display: none; clear: both;">
-						<section class="block_card" th:each="block_user:${block_user}">
+						<section class="block_card" th:each="block_user,stat:${block_user}">
 							<div class="block_card-name">
 								<span
 									th:text="${block_user.userName} +' '+ ${block_user.userId}"></span>
 							</div>
 							<div class="block_card-button">
-								<button type="submit" class="btn btn-danger">解除</button>
+								<button type="submit" class="btn btn-danger" name="unblock_btn" th:value="${stat.index}">解除</button>
+								<input type="hidden" name="unblock_user_id" th:value="${block_user.userId}" />
+								<input type="hidden" name="index" th:value="${stat.index}" />
 							</div>
 						</section>
 					</div>
 					<!--// 折り畳まれ部分 -->
 				</div>
 
-				<div class="col-md-5">
+				<div class="col-md-4">
 					<h3>パスワード変更</h3>
-					<input type="password" name="old_password" placeholder="現在のパスワード" />
-					<input type="password" name="new_password" placeholder="新しいパスワード" />
-					<input type="password" name="new_password2" placeholder="新しいパスワード" />
+					<table>
+					<tr>
+						<td><input type="password" name="old_password" placeholder="現在のパスワード" style="width:250px"/></td>
+					</tr>
+					<tr>
+						<td>
+							<input type="password" name="new_password" placeholder="新しいパスワード" style="width:250px"/>
+							<div th:if="${pass_error}" style="color:red">パスワードは半角英数のみの4文字以上20文字以内で入力してください</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="password" name="new_password2" placeholder="パスワード確認用" style="width:250px"/>
+							<div th:if="${check_error}" style="color:red">パスワード確認ができませんでした。</div>
+						</td>
+					</tr>	
+					</table>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<h3>ツイッター</h3>
-					<input type="radio" name="lock" value="0" />公開 <input type="radio"
-						name="lock" value="1" />非公開
+					<div th:switch="${login_user.lock}">
+						<div th:case="0">
+							<input type="radio" name="lock" value="0" checked="checked"/>公開
+							<input type="radio" name="lock" value="1" />非公開
+						</div>
+						<div th:case="1">
+							<input type="radio" name="lock" value="0" />公開
+							<input type="radio" name="lock" value="1" checked="checked"/>非公開
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-3"></div>
+				<div class="col-md-4" style="margin-left:36px"></div>
 				<!-- トップ画像変更 -->
-				<div class="col-md-5">
-					<h3>ユーザアイコン変更</h3>
-					<input type="file" class="btn btn-default" name="topPicture" />
-				</div>
-				<!--ヘッダ画像変更  -->
 				<div class="col-md-4">
-					<h3>ヘッダ画像変更</h3>
-					<input type="file" class="btn btn-default" name="headPicture" />
+					<div class="topInput">
+					<h3>ユーザアイコン変更</h3>
+					<input type="file" class="btn btn-default" name="topPicture" accept="image/*"/>
+					<img align="left" class="imgView" th:src="${login_user.topPictureUrl}" alt="userTopImage" width="80%" height="80%"/>
+					</div>
 				</div>
+				
+				<!--ヘッダ画像変更  -->
+				<div class="col-md-3">
+					<div class="headInput">
+					<h3>ヘッダ画像変更</h3>
+					<input type="file" class="btn btn-default" name="headPicture" accept="image/*"/>
+					<img align="left" class="imgView" th:src="${login_user.headPictureUrl}" alt="userHeaderImage" width="80%" height="80%"/>
+					</div>
+				</div>
+				
 			</div>
 			<div class="row">
-				<div class="col-md-3"></div>
-				<div class="col-md-5">
+				<div class="col-md-4" style="margin-left:36px"></div>
+				<div class="col-md-4">
 					<button type="submit" class="btn btn-default" name="cancel">キャンセル</button>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<input type="hidden" th:name="${_csrf.parameterName}"
 						th:value="${_csrf.token}" />
 					<button type="submit" class="btn btn-primary" name="save">変更を保存</button>
 				</div>
 			</div>
-		</div>
+		
 	</form>
 </body>
 </html>

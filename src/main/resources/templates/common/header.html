@@ -3,16 +3,18 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="css/bootstrap.min.css" rel="stylesheet"></link>
+<link href="css/header.css" rel="stylesheet"></link>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/textchange.js"></script>
+<script src="jquery.easy-rollover.js"></script>
 <meta charset="UTF-8" />
 <title>タイムライン</title>
 </head>
-<body bgcolor="#EEEEEE">
+<body bgcolor="#000000">
 	<div th:fragment="header">
-		<nav class="navbar navbar-default">
+		<nav class="navbar navbar-fixed-top">
 			<div class="container-fluid">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed"
@@ -103,7 +105,7 @@
 												if (couter == 140) {
 													$('#tweet_btn').attr('disabled', 'disabled');
 												}
-												$('#inputFile').on("change", function() {
+												$('#input_File').on("change", function() {
 										            var file = this.files[0];
 										            if(file != null) {
 										                $('#tweet_btn').removeAttr('disabled');
@@ -133,7 +135,13 @@
 									</div>
 									<!-- 6.モーダルのフッタ -->
 									<div class="modal-footer">
-										<input type="file" class="btn btn-default" name="upImg" id="inputFile"/>
+										<label>
+											<img src="img/camera.png" width="30px" height="30px" class="rollover"
+											onmouseover="this.src='img/up_camera.png'" onmouseout="this.src='img/camera.png'">
+												<input type="file" style="display:none" name="upImg" id="input_File" accept="image/*"/>
+											</img>
+										</label>
+										
 										<button type="button" class="btn btn-default"
 											data-dismiss="modal">キャンセル</button>
 										<button type="submit" class="btn btn-primary" id="tweet_btn">ツイート</button>

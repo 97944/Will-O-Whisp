@@ -9,9 +9,10 @@ import wow.domain.model.Tweet;
 
 @Repository
 public interface TweetRepository extends JpaRepository<Tweet, String> {
-	public List<Tweet> findByUserIdContainsOrderByTimeDesc(String userId);
-	public List<Tweet> findByTweetIdContainsOrderByTimeDesc(String tweetId);
+	public List<Tweet> findByUserIdOrderByTimeDesc(String userId);
+	public List<Tweet> findByTweetIdOrderByTimeDesc(String tweetId);
 	public List<Tweet> findByDetailContainsOrderByTimeDesc(String text);
-	public List<Tweet> findByMediaUrlContainsOrderByTimeDesc(String mediaUrl);
+	public List<Tweet> findByMediaUrlContainsAndUserIdOrderByTimeDesc(String mediaUrl,String userId);
 	public Tweet findByTweetId(String tweetId);
+	public Tweet findByUserIdAndRetweetId(String userId,String retweetId);
 }

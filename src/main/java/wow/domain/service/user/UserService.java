@@ -63,7 +63,15 @@ public class UserService {
     	blockRepository.delete(blockId);
     }
     public List<User> searchByUserId(String text){
-    	List<User> user = userRepository.findByUserIdContaining(text);
+    	List<User> user = userRepository.findByUserIdContainingOrderByUserIdAsc(text);
+    	return user;
+    }
+    public List<User> searchByUserName(String text){
+    	List<User> user = userRepository.findByUserNameContainingOrderByUserIdAsc(text);
+    	return user;
+    }
+    public List<User> searchUser(String text,String text2){
+    	List<User> user = userRepository.findByUserIdContainsOrUserNameContainsOrderByUserIdAsc(text,text2);
     	return user;
     }
 }

@@ -81,7 +81,13 @@ public class TimeLineController {
 		model.addAttribute("login_user", userDetails.getUser());
 		model.addAttribute("timeLine", timeLine);
 		model.addAttribute("count_follow", follow.size());
-
+		
+		if(timeLine.size() == 0){
+			model.addAttribute("timeLine_none",true);
+		}else{
+			model.addAttribute("timeLine_none",false);
+		}
+		
 		// ログインユーザーのツイート数をDBから取ってきて、モデルにセット
 		List<Tweet> tweet = tweetService.findTimeLine(userId);
 		model.addAttribute("count_tweet", tweet.size());
@@ -124,14 +130,18 @@ public class TimeLineController {
 		 * DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss"));
 		 * System.out.println(now);
 		 */
-		LocalDateTime now = LocalDateTime.now();
-		String favoriteId = userDetails.getUser().getUserId() + now;
-		Favorite favorite = new Favorite();
-		favorite.setFavoriteId(favoriteId);
-		favorite.setUserId(userDetails.getUser().getUserId());
-		favorite.setFavoriteTweetId(favoriteTweetId);
-
-		tweetService.favoriteTweet(favorite);
+		Favorite check = tweetService.checkFavorite(userDetails.getUser().getUserId(), favoriteTweetId);
+		
+		if(check == null){
+			LocalDateTime now = LocalDateTime.now();
+			String favoriteId = userDetails.getUser().getUserId() + now;
+			Favorite favorite = new Favorite();
+			favorite.setFavoriteId(favoriteId);
+			favorite.setUserId(userDetails.getUser().getUserId());
+			favorite.setFavoriteTweetId(favoriteTweetId);
+	
+			tweetService.favoriteTweet(favorite);
+		}
 		attributes.addAttribute("userId", userDetails.getUser().getUserId());
 
 		return "redirect:/profile";
@@ -179,8 +189,11 @@ public class TimeLineController {
 		 * LocalDateTime.parse(time,DateTimeFormatter.
 		 * ofPattern("yyyy/MM/dd hh:mm:ss"));
 		 */
-		System.out.println(retweetId);
-		if (tweetService.searchRetweet(retweetId) == null) {
+		
+		Tweet check = tweetService.checkRetweet(userDetails.getUser().getUserId(), retweetId);
+		if(check == null){
+			System.out.println(retweetId);
+			
 			LocalDateTime now = LocalDateTime.now();
 			Tweet tweet = new Tweet();
 			String tweetId = userDetails.getUser().getUserId() + now;
@@ -188,21 +201,21 @@ public class TimeLineController {
 			tweet.setUserId(userDetails.getUser().getUserId());
 			tweet.setTime(now);
 			tweet.setRetweetId(retweetId);
-	
 			tweetService.addTweet(tweet);
-		
-			Retweet retweet = new Retweet();
-			retweet.setRetweetId(retweetId);
-			Tweet re = tweetService.searchTweetByTweetId(retweetId);
+			if (tweetService.searchRetweet(retweetId) == null) {
 			
-			retweet.setUserId(re.getUserId());
-			retweet.setDetail(re.getDetail());
-			retweet.setTime(re.getTime());
-			retweet.setMediaUrl(re.getMediaUrl());
-
-			tweetService.addRetweet(retweet);
+				Retweet retweet = new Retweet();
+				retweet.setRetweetId(retweetId);
+				Tweet re = tweetService.searchTweetByTweetId(retweetId);
+				
+				retweet.setUserId(re.getUserId());
+				retweet.setDetail(re.getDetail());
+				retweet.setTime(re.getTime());
+				retweet.setMediaUrl(re.getMediaUrl());
+	
+				tweetService.addRetweet(retweet);
+			}
 		}
-
 		return "redirect:/timeLine";
 	}
 
@@ -217,14 +230,17 @@ public class TimeLineController {
 	@RequestMapping(value = "/block", method = RequestMethod.POST)
 	String block(@RequestParam("block_user_id") String blockUserId,
 			@AuthenticationPrincipal WowUserDetails userDetails) {
-		LocalDateTime now = LocalDateTime.now();
-		String blockId = userDetails.getUser().getUserId() + now;
-		Block block = new Block();
-		block.setBlockId(blockId);
-		block.setUserId(userDetails.getUser().getUserId());
-		block.setBlockUserId(blockUserId);
-		userService.blocking(block);
-
+		
+		Block check = userService.searchLoginUserBlocked(blockUserId, userDetails.getUser().getUserId());
+		if(check == null){
+			LocalDateTime now = LocalDateTime.now();
+			String blockId = userDetails.getUser().getUserId() + now;
+			Block block = new Block();
+			block.setBlockId(blockId);
+			block.setUserId(userDetails.getUser().getUserId());
+			block.setBlockUserId(blockUserId);
+			userService.blocking(block);
+		}
 		return "redirect:/timeLine";
 	}
 }

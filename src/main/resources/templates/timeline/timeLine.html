@@ -5,9 +5,11 @@
 
 <link href="css/bootstrap.min.css" rel="stylesheet"></link>
 <link href="css/timeLine.css" rel="stylesheet"></link>
+<link href="css/common.css" rel="stylesheet"></link>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/moment.js"></script>
 
 <meta charset="UTF-8" />
 <title>Wow</title>
@@ -91,6 +93,7 @@
 				<!-- タイムラインのプロフィールカード (end)-->
 			</div>
 			<div class="col-md-8">
+				<div th:if="${timeLine_none}">なにかつぶやいてください</div>
 				<section class="card" th:each="timeLine:${timeLine}">
 					<div th:if="${timeLine.retweetId}">
 						<div class="row">
@@ -120,7 +123,14 @@
 								<div class="card-title">
 									<span th:text="${timeLine.retweet.user.userName}"></span>
 									<input type="submit" name="timeLine_user_id" th:value="${timeLine.retweet.user.userId}" />
+									<span th:text="${timeLine.retweet.time}"></span>
 									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+									<script type="text/javascript">
+										var time = $('.time').val();
+										var now = moment();
+										var tweetTime = moment(time).format("YYYY年MM月DD日 HH時mm分ss秒");
+										$('.time').html(time);
+									</script>
 								</div>
 								
 							</form>
@@ -207,7 +217,12 @@
 										</script>
 											<!-- 6.モーダルのフッタ -->
 											<div class="modal-footer">
-												<input type="file" class="btn btn-default" name="upImg" id="replyFile"/>
+												<label>
+													<img src="img/camera.png" width="30px" height="30px" class="rollover"
+													onmouseover="this.src='img/up_camera.png'" onmouseout="this.src='img/camera.png'">
+														<input type="file" style="display:none" name="upImg" id="replyFile" accept="image/*"/>
+													</img>
+												</label>
 												<input type="hidden" name="reply_id" th:value="${timeLine.retweetId}" />
 												<button type="submit" class="btn btn-primary" id="reply_btn">ツイート</button>
 												<input type="hidden" th:name="${_csrf.parameterName}"
@@ -274,6 +289,7 @@
 								<div class="card-title">
 									<span th:text="${timeLine.user.userName}"></span>
 									<input type="submit" name="timeLine_user_id" th:value="${timeLine.user.userId}" />
+									<span th:text="${timeLine.time}"></span>
 									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 								</div>
 								
@@ -369,7 +385,12 @@
 										</script>
 											<!-- 6.モーダルのフッタ -->
 											<div class="modal-footer">
-												<input type="file" class="btn btn-default" name="upImg" id="inputFile"/>
+												<label>
+													<img src="img/camera.png" width="30px" height="30px" class="rollover"
+													onmouseover="this.src='img/up_camera.png'" onmouseout="this.src='img/camera.png'">
+														<input type="file" style="display:none" name="upImg" id="replyFile" accept="image/*"/>
+													</img>
+												</label>
 												<input type="hidden" name="reply_id" th:value="${timeLine.tweetId}" />
 												<button type="submit" class="btn btn-primary" id="reply_btn">ツイート</button>
 												<input type="hidden" th:name="${_csrf.parameterName}"

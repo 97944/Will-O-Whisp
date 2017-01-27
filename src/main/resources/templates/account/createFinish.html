@@ -2,17 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
+<link href="../css/bootstrap.min.css" rel="stylesheet"></link>
+<link href="../css/loginForm.css" rel="stylesheet"></link>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
 <title>アカウント作成</title>
 </head>
 <body>
-	<h3>アカウント 作成</h3>
-<div class="container">
-    <h1>ユーザー登録完了</h1>
 
-    <p>
-        ようこそ <span th:text="${user.userName}">ほげ</span>さん。<br/>
-        <a th:href="@{/loginForm}" href="../login/loginForm.html">こちら</a>からログインしてください。
-    </p>
-</div>
+	<!-- 新設アカウント作成フォーム(start) -->
+	<div class="wrapper dark-header">
+		<!-- ヘッダ領域(start) -->
+		<header class="main-header">
+			<div class="logo">アカウント作成</div>
+			<div class="navbar navbar-static-top"></div>
+		</header>
+		<!-- ヘッダ領域(end) -->
+		<!-- メッセージ領域(start) -->
+		<section class="login-inner">
+			<div class="login-middle">
+				<div class="login-details">
+					<!-- WOWロゴ表示 -->
+					<div class="text-center">
+						<img src="/img/wowLogo2.png" width="40%" />
+					</div>
+					<h1>ユーザー登録完了</h1>
+					<p>
+						ようこそ <span th:text="${user.userName}">ほげ</span>さん。<br /> <a
+							th:href="@{/loginForm}" href="../login/loginForm.html">こちら</a>からログインしてください。
+					</p>
+				</div>
+			</div>
+		</section>
+		<!-- メッセージ領域(end) -->
+	</div>
+	<!-- 新設アカウント作成フォーム(end) -->
+
 </body>
 </html>

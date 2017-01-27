@@ -52,6 +52,27 @@ public class EditController {
 		
 		return "edit/edit";
 	}
+	@RequestMapping(params = "unblock_btn" ,method = RequestMethod.POST)
+	String unBlock(@AuthenticationPrincipal WowUserDetails userDetails,
+			@RequestParam("unblock_user_id") String[] unBlockUserId,
+			@RequestParam("unblock_btn") int index){
+		System.out.println(userDetails.getUser().getUserId() + " " + unBlockUserId);
+		System.out.println(index);
+		Block block = userService.searchLoginUserBlocked(unBlockUserId[index],userDetails.getUser().getUserId());
+		
+		if(block != null){
+			System.out.println("ブロック解除");
+			userService.unblock(block.getBlockId());
+		}else{
+			System.out.println("ブロック解除できないよー");
+		}
+		
+		return "redirect:/edit";
+	}
+	@RequestMapping(params = "cancel",method = RequestMethod.POST)
+	String cancel(){
+		return "redirect:/timeLine";
+	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	String editSave(@AuthenticationPrincipal WowUserDetails userDetails,
@@ -59,26 +80,50 @@ public class EditController {
 			@RequestParam("profile") String profile,
 			@RequestParam("old_password") String oldPassword,
 			@RequestParam("new_password") String newPassword,
+			@RequestParam("new_password2") String newPassword2,
 			@RequestParam("lock") int lock,
 			@RequestParam("topPicture")MultipartFile topPicture,
 			@RequestParam("headPicture")MultipartFile headPicture,
-			RedirectAttributes attributes){
+			RedirectAttributes attributes,Model model){
 		
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = userDetails.getUser();
         
+        int count = 0;
+        
         if(encoder.matches(oldPassword,userDetails.getUser().getPassword())){
+        	if(newPassword.length() < 4 || 20 < newPassword.length() || !newPassword.matches("[0-9a-zA-Z]+")){
+    			model.addAttribute("pass_error",true);
+    			count++;
+    		}
+        	if(!(newPassword.equals(newPassword2))){
+        		model.addAttribute("check_error",true);
+        		count++;
+        	}
+        	if(count != 0){
+        		model.addAttribute("login_user",user);
+        		return "edit/edit";
+        	}
         	String newPasswordHash = encoder.encode(newPassword);
-        	user.setUserName(userName);
-        	user.setProfile(profile);
+        	
         	user.setPassword(newPasswordHash);
-        	user.setLock(lock);
         	
         	userService.update(user);
         }else{
         	System.out.println("パスワード確認失敗");
         }
-        
+        if(userName.length() < 1 || 20 < userName.length()){
+        	model.addAttribute("name_error",true);
+        	count++;
+        }
+        if(160 < profile.length()){
+        	model.addAttribute("profile_error",true);
+        	count++;
+        }
+        if(count != 0){
+        	model.addAttribute("login_user",user);
+        	return "edit/edit";
+        }
         user.setUserName(userName);
         user.setProfile(profile);
         user.setLock(lock);

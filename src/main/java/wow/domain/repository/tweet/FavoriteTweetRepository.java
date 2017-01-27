@@ -12,4 +12,5 @@ import wow.domain.model.Tweet;
 public interface FavoriteTweetRepository extends JpaRepository<Favorite, String> {
 	public List<Favorite> findByUserId(String userId);
 	public List<Favorite> findByFavoriteTweetId(String favoriteTweetId);
+	public Favorite findByUserIdAndFavoriteTweetId(String userId,String favoriteTweetId);
 }

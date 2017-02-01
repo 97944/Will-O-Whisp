@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +47,8 @@ public class TimeLineController {
 	UserService userService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	String listTweet(@AuthenticationPrincipal WowUserDetails userDetails, Model model) {
+	String listTweet(@RequestParam("more") Optional<Integer> more,
+			@AuthenticationPrincipal WowUserDetails userDetails, Model model) {
 		System.out.println("タイムライン" + userDetails.getUser().getUserName());
 
 		String userId = userDetails.getUser().getUserId();
@@ -66,20 +69,86 @@ public class TimeLineController {
 			timeLine.add(loginList.get(i));
 		}
 		Collections.sort(timeLine, new TimeLineComparator());
-
-		// timeLine の media を画像へ変換し、変換先URLを mediaUrl へセット＠南波
-		for (int i = 0; i < timeLine.size(); i++) {
-			if (timeLine.get(i).getMedia() != null) {
-				// System.out.println("ファイル保存処理" + timeLine.get(i).getDetail());
-				String saveFileName = "tweetPicture/tweetPicture_" + timeLine.get(i).getTweetId() + ".jpg";
-				OtherLogic.saveImageFromHexString(timeLine.get(i).getMedia(), saveFileName);
-				timeLine.get(i).setMediaUrl("img/usersPicture/" + saveFileName);
-				tweetService.addTweet(timeLine.get(i));
+		
+		List<TimeLine> trueTimeLine = new ArrayList<TimeLine>();
+		for(int i=0;i<timeLine.size();i++){
+			int countRetweet = 0;
+			countRetweet = tweetService.countRetweet(timeLine.get(i).getTweetId());
+			if(tweetService.searchRetweet(timeLine.get(i).getRetweetId()) != null){
+				countRetweet = tweetService.countRetweet(timeLine.get(i).getRetweetId());
 			}
+			
+			int countFavorite = 0;
+			countFavorite = tweetService.countFavorite(timeLine.get(i).getTweetId());
+			if(timeLine.get(i).getRetweetId() != null){
+				countFavorite = tweetService.countFavorite(timeLine.get(i).getRetweetId());
+			}
+			
+			boolean checkRetweet = false;
+			if(timeLine.get(i).getRetweetId() != null){
+				if(tweetService.checkRetweet(userId, timeLine.get(i).getRetweetId()) != null){
+					checkRetweet = true;
+				}
+			}else{
+				if(tweetService.checkRetweet(userId, timeLine.get(i).getTweetId()) != null){
+					checkRetweet = true;
+				}
+			}
+			
+			boolean checkFavorite = false;
+			if(timeLine.get(i).getRetweetId() != null){
+				if(tweetService.checkFavorite(userId, timeLine.get(i).getRetweetId()) != null){
+					checkFavorite = true;
+				}
+			}else{
+				if(tweetService.checkFavorite(userId, timeLine.get(i).getTweetId()) != null){
+					checkFavorite = true;
+				}
+			}
+			
+			TimeLine dummy = new TimeLine();
+			dummy.setTweetId(timeLine.get(i).getTweetId());
+			dummy.setUserId(timeLine.get(i).getUserId());
+			dummy.setDetail(timeLine.get(i).getDetail());
+			dummy.setTime(timeLine.get(i).getTime());
+			dummy.setMedia(timeLine.get(i).getMedia());
+			dummy.setMediaUrl(timeLine.get(i).getMediaUrl());
+			dummy.setRelation(timeLine.get(i).getRelation());
+			dummy.setReplyId(timeLine.get(i).getReplyId());
+			dummy.setRetweetId(timeLine.get(i).getRetweetId());
+			dummy.setUser(timeLine.get(i).getUser());
+			dummy.setRetweet(timeLine.get(i).getRetweet());
+			dummy.setReply(timeLine.get(i).getReply());
+			dummy.setCountRetweet(countRetweet);
+			dummy.setCountFavorite(countFavorite);
+			dummy.setCheckRetweet(checkRetweet);
+			dummy.setCheckFavorite(checkFavorite);
+			
+			trueTimeLine.add(dummy);
+		}
+
+		int morePage;
+		if(more.isPresent()){
+			morePage = more.get();
+		}else{
+			morePage = 1;
+		}
+		List<TimeLine> tl = new ArrayList<TimeLine>();
+		if(trueTimeLine.size() > morePage*10){
+			for(int i=0;i<morePage*10;i++){
+				tl.add(trueTimeLine.get(i));
+			}
+			model.addAttribute("more",morePage);
+			Collections.sort(tl, new TimeLineComparator());
+			model.addAttribute("timeLine", tl);
+		}else{
+			model.addAttribute("more",0);
+			Collections.sort(tl, new TimeLineComparator());
+			model.addAttribute("timeLine", trueTimeLine);
 		}
 		
 		model.addAttribute("login_user", userDetails.getUser());
-		model.addAttribute("timeLine", timeLine);
+		
 		model.addAttribute("count_follow", follow.size());
 		
 		if(timeLine.size() == 0){
@@ -161,8 +230,12 @@ public class TimeLineController {
 		tweet.setRelation(1);
 		tweet.setReplyId(replyId);
 		// 画像無しツイートした時は IOException になる。しかし動く＠南波
-		if(upImg != null){
+		if(upImg.isEmpty() == false){
 			tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+			tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+			String saveFileName = "tweetPicture/tweetPicture_" + tweetId + ".jpg";
+			OtherLogic.saveImageFromHexString(tweet.getMedia(), saveFileName);
+			tweet.setMediaUrl("img/usersPicture/" + saveFileName);
 		}
 		
 		if (tweetService.searchReply(replyId) == null) {

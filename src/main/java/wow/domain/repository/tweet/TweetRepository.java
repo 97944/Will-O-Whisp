@@ -13,6 +13,7 @@ public interface TweetRepository extends JpaRepository<Tweet, String> {
 	public List<Tweet> findByTweetIdOrderByTimeDesc(String tweetId);
 	public List<Tweet> findByDetailContainsOrderByTimeDesc(String text);
 	public List<Tweet> findByMediaUrlContainsAndUserIdOrderByTimeDesc(String mediaUrl,String userId);
+	public List<Tweet> findByRetweetId(String retweetId);
 	public Tweet findByTweetId(String tweetId);
 	public Tweet findByUserIdAndRetweetId(String userId,String retweetId);
 }

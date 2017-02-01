@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import wow.app.account.AccountForm;
 import wow.domain.model.Block;
 import wow.domain.model.Follow;
+import wow.domain.model.Request;
 import wow.domain.model.User;
 import wow.domain.repository.user.BlockUserRepository;
 import wow.domain.repository.user.FollowUserRepository;
+import wow.domain.repository.user.RequestRepository;
 import wow.domain.repository.user.UserRepository;
 
 @Service
@@ -22,10 +24,17 @@ public class UserService {
     FollowUserRepository followRepository;
     @Autowired
     BlockUserRepository blockRepository;
+    @Autowired
+    RequestRepository requestRepository;
 
     public User loadUserByUserId(String userId){
     	User user = userRepository.findByUserId(userId);
     	return user;
+    }
+    
+    public Follow checkFollow(String userId,String followUserId){
+    	Follow follow = followRepository.findByUserIdAndFollowUserId(userId, followUserId);
+    	return follow;
     }
 
     public List<Follow> loadFollowUserByUserId(String userId){
@@ -73,6 +82,19 @@ public class UserService {
     public List<User> searchUser(String text,String text2){
     	List<User> user = userRepository.findByUserIdContainsOrUserNameContainsOrderByUserIdAsc(text,text2);
     	return user;
+    }
+    public void request(Request request){
+    	requestRepository.save(request);
+    }
+    public void accept(String requestId){
+    	requestRepository.delete(requestId);
+    }
+    public List<Request> searchRequestList(String requestUserId){
+    	List<Request> request = requestRepository.findByRequestUserId(requestUserId);
+    	return request;
+    }
+    public Request checkRequest(String userId,String requestUserId){
+    	return requestRepository.findByUserIdAndRequestUserId(userId, requestUserId);
     }
 }
 

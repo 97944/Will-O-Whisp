@@ -1,6 +1,7 @@
 package wow.app.header;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -46,13 +47,14 @@ public class HeaderController {
 	String dispSearch(@RequestParam("searchText") String text,@AuthenticationPrincipal WowUserDetails userDetails,
 			RedirectAttributes attributes) {
 		attributes.addAttribute("text", text);
+		attributes.addAttribute("more",1);
 		return "redirect:/search";
 	}
 
 	// ツイート
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	String addTweet(@RequestParam("tweet") String detail,@AuthenticationPrincipal WowUserDetails userDetails,
-			@RequestParam("upImg") MultipartFile upImg) {
+			@RequestParam("upImg")MultipartFile upImg) {
 
 		LocalDateTime now = LocalDateTime.now();
 		String userId = userDetails.getUser().getUserId();
@@ -63,8 +65,14 @@ public class HeaderController {
 		tweet.setDetail(detail);
 		tweet.setTime(now);
 		// 画像無しツイートした時は IOException になる。しかし動く＠南波
-		if(upImg!=null){
+		if(upImg.isEmpty() == false){
+			System.out.println("画像あり:" + upImg);
 			tweet.setMedia(OtherLogic.multipartFileToHexString(upImg));
+			String saveFileName = "tweetPicture/tweetPicture_" + tweetId + ".jpg";
+			OtherLogic.saveImageFromHexString(tweet.getMedia(), saveFileName);
+			tweet.setMediaUrl("img/usersPicture/" + saveFileName);
+		}else{
+			System.out.println("画像はありません");
 		}
 		
 		tweetService.addTweet(tweet);
@@ -74,7 +82,8 @@ public class HeaderController {
 
 	// タイムライン表示
 	@RequestMapping(value = "timeLine", method = RequestMethod.POST)
-	String dispTweet(@AuthenticationPrincipal WowUserDetails userDetails) {
+	String dispTweet(@AuthenticationPrincipal WowUserDetails userDetails,RedirectAttributes attributes) {
+		//attributes.addAttribute("more",1);
 		return "redirect:/timeLine";
 	}
 	

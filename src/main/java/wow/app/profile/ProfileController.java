@@ -23,10 +23,12 @@ import wow.domain.service.tweet.TweetService;
 import wow.domain.service.user.UserService;
 import wow.domain.service.user.WowUserDetails;
 import wow.OtherLogic;
+import wow.app.tweet.TimeLine;
 import wow.app.tweet.TimeLineComparator;
 import wow.domain.model.Block;
 import wow.domain.model.Favorite;
 import wow.domain.model.Follow;
+import wow.domain.model.Request;
 import wow.domain.model.Tweet;
 import wow.domain.model.User;
 
@@ -53,6 +55,10 @@ public class ProfileController {
 		User user = userService.loadUserByUserId(userId);
 		model.addAttribute("user", user);
 		
+		if(userService.checkRequest(loginUser.getUserId(), user.getUserId()) != null){
+			model.addAttribute("request_btn",true);
+		}
+		
 		// ユーザのトップ画像、ヘッダ画像を取得
 		// topPicture を画像へ変換し、変換先URLを topPictureUrl へセット＠南波
 		if (user.getTopPicture() != null) {
@@ -72,7 +78,63 @@ public class ProfileController {
 		
 		// ユーザーのツイートをDBから取ってきて、モデルにセット
 		List<Tweet> tweet = tweetService.findTimeLine(userId);
-		model.addAttribute("tweet", tweet);
+		List<TimeLine> trueTweet = new ArrayList<TimeLine>();
+		for(int i=0;i<tweet.size();i++){
+			int countRetweet = 0;
+			countRetweet = tweetService.countRetweet(tweet.get(i).getTweetId());
+			if(tweetService.searchRetweet(tweet.get(i).getRetweetId()) != null){
+				countRetweet = tweetService.countRetweet(tweet.get(i).getRetweetId());
+			}
+			
+			int countFavorite = 0;
+			countFavorite = tweetService.countFavorite(tweet.get(i).getTweetId());
+			if(tweet.get(i).getRetweetId() != null){
+				countFavorite = tweetService.countFavorite(tweet.get(i).getRetweetId());
+			}
+			
+			boolean checkRetweet = false;
+			if(tweet.get(i).getRetweetId() != null){
+				if(tweetService.checkRetweet(userId, tweet.get(i).getRetweetId()) != null){
+					checkRetweet = true;
+				}
+			}else{
+				if(tweetService.checkRetweet(userId, tweet.get(i).getTweetId()) != null){
+					checkRetweet = true;
+				}
+			}
+			
+			boolean checkFavorite = false;
+			if(tweet.get(i).getRetweetId() != null){
+				if(tweetService.checkFavorite(userId, tweet.get(i).getRetweetId()) != null){
+					checkFavorite = true;
+				}
+			}else{
+				if(tweetService.checkFavorite(userId, tweet.get(i).getTweetId()) != null){
+					checkFavorite = true;
+				}
+			}
+			
+			TimeLine dummy = new TimeLine();
+			dummy.setTweetId(tweet.get(i).getTweetId());
+			dummy.setUserId(tweet.get(i).getUserId());
+			dummy.setDetail(tweet.get(i).getDetail());
+			dummy.setTime(tweet.get(i).getTime());
+			dummy.setMedia(tweet.get(i).getMedia());
+			dummy.setMediaUrl(tweet.get(i).getMediaUrl());
+			dummy.setRelation(tweet.get(i).getRelation());
+			dummy.setReplyId(tweet.get(i).getReplyId());
+			dummy.setRetweetId(tweet.get(i).getRetweetId());
+			dummy.setUser(tweet.get(i).getUser());
+			dummy.setRetweet(tweet.get(i).getRetweet());
+			dummy.setReply(tweet.get(i).getReply());
+			dummy.setCountRetweet(countRetweet);
+			dummy.setCountFavorite(countFavorite);
+			dummy.setCheckRetweet(checkRetweet);
+			dummy.setCheckFavorite(checkFavorite);
+			
+			trueTweet.add(dummy);
+		}
+		model.addAttribute("tweet", trueTweet);
 		model.addAttribute("count_tweet", tweet.size());
 		System.out.println("ツイート数" + tweet.size());
 		if(tweet.size() == 0){
@@ -87,7 +149,37 @@ public class ProfileController {
 		for (int i = 0; i < follow.size(); i++) {
 			followUser.add(userService.loadUserByUserId(follow.get(i).getFollowUserId()));
 		}
-		model.addAttribute("follow", followUser);
+		List<Profile> trueFollowUser = new ArrayList<Profile>();
+    	for(int i=0;i<followUser.size();i++){
+    		int check = 0;
+    		if(!(user.getUserId().equals(followUser.get(i).getUserId()))){
+	    		if(userService.checkFollow(user.getUserId(),followUser.get(i).getUserId()) != null){
+	    			check = 1;
+	    		}else{
+	    			if(userService.checkRequest(userDetails.getUser().getUserId(), followUser.get(i).getUserId()) != null){
+	    				check = 3;
+	    			}else{
+	    				check = 2;
+	    			}
+    			}
+    		}
+    		System.out.println("ユーザー名" + followUser.get(i).getUserName() + ":" + check);
+    		Profile profile = new Profile();
+    		profile.setUserId(followUser.get(i).getUserId());
+    		profile.setUserName(followUser.get(i).getUserName());
+    		profile.setPassword(followUser.get(i).getPassword());
+    		profile.setProfile(followUser.get(i).getProfile());
+    		profile.setTopPicture(followUser.get(i).getTopPicture());
+    		profile.setTopPictureUrl(followUser.get(i).getTopPictureUrl());
+    		profile.setHeadPicture(followUser.get(i).getHeadPicture());
+    		profile.setHeadPictureUrl(followUser.get(i).getHeadPictureUrl());
+    		profile.setLock(followUser.get(i).getLock());
+    		profile.setRoleName(followUser.get(i).getRoleName());
+    		profile.setCheck(check);
+    		
+    		trueFollowUser.add(profile);
+    	}
+		model.addAttribute("follow", trueFollowUser);
 		model.addAttribute("count_follow", followUser.size());
 		System.out.println("フォロー数" + followUser.size());
 		if(followUser.size() == 0){
@@ -102,7 +194,37 @@ public class ProfileController {
 		for (int i = 0; i < follower.size(); i++) {
 			followerUser.add(userService.loadUserByUserId(follower.get(i).getUserId()));
 		}
-		model.addAttribute("follower", followerUser);
+		List<Profile> trueFollowerUser = new ArrayList<Profile>();
+		int check = 0;
+    	for(int i=0;i<followerUser.size();i++){
+    		if(!(user.getUserId().equals(followerUser.get(i).getUserId()))){
+	    		if(userService.checkFollow(user.getUserId(),followerUser.get(i).getUserId()) != null){
+	    			check = 1;
+	    		}else{
+	    			if(userService.checkRequest(userDetails.getUser().getUserId(), followerUser.get(i).getUserId()) != null){
+	    				check = 3;
+	    			}else{
+	    				check = 2;
+	    			}
+	    		}
+    		}
+    		System.out.println("ユーザー名" + followerUser.get(i).getUserName() + ":" + check);
+    		Profile profile = new Profile();
+    		profile.setUserId(followerUser.get(i).getUserId());
+    		profile.setUserName(followerUser.get(i).getUserName());
+    		profile.setPassword(followerUser.get(i).getPassword());
+    		profile.setProfile(followerUser.get(i).getProfile());
+    		profile.setTopPicture(followerUser.get(i).getTopPicture());
+    		profile.setTopPictureUrl(followerUser.get(i).getTopPictureUrl());
+    		profile.setHeadPicture(followerUser.get(i).getHeadPicture());
+    		profile.setHeadPictureUrl(followerUser.get(i).getHeadPictureUrl());
+    		profile.setLock(followerUser.get(i).getLock());
+    		profile.setRoleName(followerUser.get(i).getRoleName());
+    		profile.setCheck(check);
+    		
+    		trueFollowerUser.add(profile);
+    	}
+		model.addAttribute("follower", trueFollowerUser);
 		model.addAttribute("count_follower", followerUser.size());
 		System.out.println("フォロワー数" + followerUser.size());
 		if(follower.size() == 0){
@@ -113,8 +235,64 @@ public class ProfileController {
 
 		// いいねしたツイートをDBから取ってきて、モデルにセット
 		List<Tweet> favorite = tweetService.findFavoriteTweet(userId);
-		Collections.sort(favorite,new TimeLineComparator());
-		model.addAttribute("favorite", favorite);
+		List<TimeLine> trueFavorite = new ArrayList<TimeLine>();
+		for(int i=0;i<favorite.size();i++){
+			int countRetweet = 0;
+			countRetweet = tweetService.countRetweet(favorite.get(i).getTweetId());
+			if(tweetService.searchRetweet(favorite.get(i).getRetweetId()) != null){
+				countRetweet = tweetService.countRetweet(favorite.get(i).getRetweetId());
+			}
+			
+			int countFavorite = 0;
+			countFavorite = tweetService.countFavorite(favorite.get(i).getTweetId());
+			if(favorite.get(i).getRetweetId() != null){
+				countFavorite = tweetService.countFavorite(favorite.get(i).getRetweetId());
+			}
+			
+			boolean checkRetweet = false;
+			if(favorite.get(i).getRetweetId() != null){
+				if(tweetService.checkRetweet(userId, favorite.get(i).getRetweetId()) != null){
+					checkRetweet = true;
+				}
+			}else{
+				if(tweetService.checkRetweet(userId, favorite.get(i).getTweetId()) != null){
+					checkRetweet = true;
+				}
+			}
+			
+			boolean checkFavorite = false;
+			if(favorite.get(i).getRetweetId() != null){
+				if(tweetService.checkFavorite(userId, favorite.get(i).getRetweetId()) != null){
+					checkFavorite = true;
+				}
+			}else{
+				if(tweetService.checkFavorite(userId, favorite.get(i).getTweetId()) != null){
+					checkFavorite = true;
+				}
+			}
+			
+			TimeLine dummy = new TimeLine();
+			dummy.setTweetId(favorite.get(i).getTweetId());
+			dummy.setUserId(favorite.get(i).getUserId());
+			dummy.setDetail(favorite.get(i).getDetail());
+			dummy.setTime(favorite.get(i).getTime());
+			dummy.setMedia(favorite.get(i).getMedia());
+			dummy.setMediaUrl(favorite.get(i).getMediaUrl());
+			dummy.setRelation(favorite.get(i).getRelation());
+			dummy.setReplyId(favorite.get(i).getReplyId());
+			dummy.setRetweetId(favorite.get(i).getRetweetId());
+			dummy.setUser(favorite.get(i).getUser());
+			dummy.setRetweet(favorite.get(i).getRetweet());
+			dummy.setReply(favorite.get(i).getReply());
+			dummy.setCountRetweet(countRetweet);
+			dummy.setCountFavorite(countFavorite);
+			dummy.setCheckRetweet(checkRetweet);
+			dummy.setCheckFavorite(checkFavorite);
+			
+			trueFavorite.add(dummy);
+		}
+		Collections.sort(trueFavorite,new TimeLineComparator());
+		model.addAttribute("favorite", trueFavorite);
 		model.addAttribute("count_favorite", favorite.size());
 		System.out.println("お気に入り数" + favorite.size());
 		if(favorite.size() == 0){
@@ -125,7 +303,63 @@ public class ProfileController {
 
 		// 画像付きの自分のツイートをDBから取ってきて、モデルにセット
 		List<Tweet> media = tweetService.searchMedia(userId,userId);
-		model.addAttribute("media",media);
+		List<TimeLine> trueMedia = new ArrayList<>();
+		for(int i=0;i<media.size();i++){
+			int countRetweet = 0;
+			countRetweet = tweetService.countRetweet(media.get(i).getTweetId());
+			if(tweetService.searchRetweet(media.get(i).getRetweetId()) != null){
+				countRetweet = tweetService.countRetweet(media.get(i).getRetweetId());
+			}
+			
+			int countFavorite = 0;
+			countFavorite = tweetService.countFavorite(media.get(i).getTweetId());
+			if(media.get(i).getRetweetId() != null){
+				countFavorite = tweetService.countFavorite(media.get(i).getRetweetId());
+			}
+			
+			boolean checkRetweet = false;
+			if(media.get(i).getRetweetId() != null){
+				if(tweetService.checkRetweet(userId, media.get(i).getRetweetId()) != null){
+					checkRetweet = true;
+				}
+			}else{
+				if(tweetService.checkRetweet(userId, media.get(i).getTweetId()) != null){
+					checkRetweet = true;
+				}
+			}
+			
+			boolean checkFavorite = false;
+			if(media.get(i).getRetweetId() != null){
+				if(tweetService.checkFavorite(userId, media.get(i).getRetweetId()) != null){
+					checkFavorite = true;
+				}
+			}else{
+				if(tweetService.checkFavorite(userId, media.get(i).getTweetId()) != null){
+					checkFavorite = true;
+				}
+			}
+			
+			TimeLine dummy = new TimeLine();
+			dummy.setTweetId(media.get(i).getTweetId());
+			dummy.setUserId(media.get(i).getUserId());
+			dummy.setDetail(media.get(i).getDetail());
+			dummy.setTime(media.get(i).getTime());
+			dummy.setMedia(media.get(i).getMedia());
+			dummy.setMediaUrl(media.get(i).getMediaUrl());
+			dummy.setRelation(media.get(i).getRelation());
+			dummy.setReplyId(media.get(i).getReplyId());
+			dummy.setRetweetId(media.get(i).getRetweetId());
+			dummy.setUser(media.get(i).getUser());
+			dummy.setRetweet(media.get(i).getRetweet());
+			dummy.setReply(media.get(i).getReply());
+			dummy.setCountRetweet(countRetweet);
+			dummy.setCountFavorite(countFavorite);
+			dummy.setCheckRetweet(checkRetweet);
+			dummy.setCheckFavorite(checkFavorite);
+			
+			trueMedia.add(dummy);
+		}
+		model.addAttribute("media",trueMedia);
 		model.addAttribute("count_media",media.size());
 		System.out.println("画像付きツイート数" +  media.size());
 		if(media.size() == 0){
@@ -148,6 +382,12 @@ public class ProfileController {
 		System.out.println("プロフィールのユーザーID：" + userId + "　ログインユーザーのユーザーID：" + userDetails.getUser().getUserId());
 		if (userId.equals(userDetails.getUser().getUserId())) {
 			model.addAttribute("switch","ログイン");
+			List<Request> request = userService.searchRequestList(userId);
+			List<User> requestList = new ArrayList<User>();
+			for(int i=0;i<request.size();i++){
+				requestList.add(userService.loadUserByUserId(request.get(i).getUserId()));
+			}
+			model.addAttribute("request_list",requestList);
 			System.out.println("このユーザーはログインユーザー");
 		}else{
 			List<String> followId = new ArrayList<String>();
@@ -162,18 +402,20 @@ public class ProfileController {
 			}else{
 				model.addAttribute("switch","未フォロー");
 				System.out.println("このユーザーは未フォロー");
+				if(user.getLock() == 1){
+					model.addAttribute("lock",true);
+				}
 			}
 		}
-		
 		// ログインユーザーがブロックされているかどうか
 		Block block = userService.searchLoginUserBlocked(userDetails.getUser().getUserId(), userId);
-		boolean check;
+		boolean checkBlock;
 		if(block == null){
-			check = false;
+			checkBlock = false;
 		}else{
-			check = true;
+			checkBlock = true;
 		}
-		model.addAttribute("check",check);
+		model.addAttribute("check",checkBlock);
 		
 		// ログインユーザーがブロックしているかどうか
 		Block block2 = userService.searchLoginUserBlocked(userId, userDetails.getUser().getUserId());
@@ -250,17 +492,30 @@ public class ProfileController {
 	// フォローしてないユーザーの場合
 	@RequestMapping(value = "/following", method = RequestMethod.POST)
 	String follow(@AuthenticationPrincipal WowUserDetails userDetails,
-			@RequestParam("following_user_id") String followingUserId,RedirectAttributes attributes){
-		System.out.println("フォロー開始");
-		LocalDateTime time = LocalDateTime.now();
-		String followId = userDetails.getUser().getUserId() + time;
-		Follow follow = new Follow();
-		follow.setFollowId(followId);
-		follow.setUserId(userDetails.getUser().getUserId());
-		follow.setFollowUserId(followingUserId);
+			@RequestParam("following_user_id") String followingUserId,
+			@RequestParam("user_lock") int lock,RedirectAttributes attributes){
 		
-		userService.following(follow);
-		
+		if(lock == 0){
+			System.out.println("フォロー開始");
+			LocalDateTime time = LocalDateTime.now();
+			String followId = userDetails.getUser().getUserId() + time;
+			Follow follow = new Follow();
+			follow.setFollowId(followId);
+			follow.setUserId(userDetails.getUser().getUserId());
+			follow.setFollowUserId(followingUserId);
+			
+			userService.following(follow);
+		}else{
+			System.out.println("フォローリクエスト送信");
+			LocalDateTime time = LocalDateTime.now();
+			String requestId = userDetails.getUser().getUserId() + time;
+			Request request = new Request();
+			request.setRequestId(requestId);
+			request.setUserId(userDetails.getUser().getUserId());
+			request.setRequestUserId(followingUserId);
+			
+			userService.request(request);
+		}
 		attributes.addAttribute("userId",followingUserId);
 		
 		return "redirect:/profile";
@@ -279,6 +534,29 @@ public class ProfileController {
 		}
 		
 		attributes.addAttribute("userId",unBlockUserId);
+		return "redirect:/profile";
+	}
+	@RequestMapping(value = "accept", method = RequestMethod.POST)
+	String accept(@RequestParam("accept_user_id")String acceptUserId,
+			@AuthenticationPrincipal WowUserDetails userDetails,
+			RedirectAttributes attributes){
+		Request request = userService.checkRequest(acceptUserId,userDetails.getUser().getUserId());
+		
+		if(request != null){
+			System.out.println("リクエスト承認OK!フォローします");
+			userService.accept(request.getRequestId());
+			LocalDateTime now = LocalDateTime.now();
+			Follow follow = new Follow();
+			String followId = acceptUserId + now;
+			follow.setFollowId(followId);
+			follow.setUserId(acceptUserId);
+			follow.setFollowUserId(userDetails.getUser().getUserId());
+			userService.following(follow);
+		}else{
+			System.out.println("リクエスト承認できないよー");
+		}
+		
+		attributes.addAttribute("userId",userDetails.getUser().getUserId());
 		return "redirect:/profile";
 	}
 }

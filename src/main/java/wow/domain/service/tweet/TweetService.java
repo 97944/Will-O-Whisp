@@ -3,6 +3,7 @@ package wow.domain.service.tweet;
 import java.util.ArrayList;
 import java.util.List;
 
+import wow.app.tweet.TimeLine;
 import wow.domain.model.Favorite;
 import wow.domain.model.Reply;
 import wow.domain.model.Retweet;
@@ -31,6 +32,10 @@ public class TweetService {
 	
 	@Autowired
 	ReplyRepository replyRepository;
+	
+	public int countRetweet(String retweetId){
+		return tweetRepository.findByRetweetId(retweetId).size();
+	}
 	
 	public List<Tweet> findTimeLine(String userId){
 		return tweetRepository.findByUserIdOrderByTimeDesc(userId);
@@ -63,6 +68,10 @@ public class TweetService {
 		return favoriteTweetRepository.findByUserIdAndFavoriteTweetId(userId, favoriteTweetId);
 	}
 	
+	public Tweet checkRetweet(String userId,String retweetId){
+		return tweetRepository.findByUserIdAndRetweetId(userId, retweetId);
+	}
+	
 	public void favoriteTweet(Favorite favorite){
 		favoriteTweetRepository.save(favorite);
 	}
@@ -77,15 +86,15 @@ public class TweetService {
 		tweetRepository.save(tweet);
 	}
 	
-	public Tweet checkRetweet(String userId,String retweetId){
-		return tweetRepository.findByUserIdAndRetweetId(userId, retweetId);
-	}
 	
 	public void addRetweet(Retweet retweet){
 		retweetRepository.save(retweet);
 	}
 	public Retweet searchRetweet(String retweetId){
 		return retweetRepository.findByRetweetId(retweetId);
+	}
+	public List<Favorite> searchFavorite(String favoriteTweetId){
+		return favoriteTweetRepository.findByFavoriteTweetId(favoriteTweetId);
 	}
 	public void addReply(Reply reply){
 		replyRepository.save(reply);

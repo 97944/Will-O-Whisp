@@ -101,6 +101,7 @@ div.tab p {
 
 .card-content {
  padding: 20px;
+ word-break:break-all
 }
 
 .card-title {
